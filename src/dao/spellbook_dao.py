@@ -1,0 +1,119 @@
+# import our get connection function
+from utils import dbconfig
+
+
+# add a new spellbook to the database
+def create_spellbook(spellbook_id, spell_casting_class, spell_casting_level, spells=[None]):
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        # create query string using parameterization to protect against SQL injection
+        query = "INSERT INTO spellbooks VALUES (default, ?, ?, ?, ?, ?, ?, ?, ?)"
+        # execute our query and commit the changes to the database
+        cursor.execute(query, spellbook_id, spell_casting_class, spell_casting_level, spells)
+        cursor.commit()
+    finally:
+        # close our database connection
+        connection.close()
+
+
+# pull a specific spellbook from the database
+def get_spellbook(spellbook_id):
+    # create result variable
+    result = None
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        # create query string using parameterization to protect against SQL injection
+        query = "SELECT * FROM spellbooks WHERE spellbook_id = ?"
+        # execute our query
+        cursor.execute(query, spellbook_id)
+        # fetch the results of the query
+        result = cursor.fetchone()
+    finally:
+        # close our database connection
+        connection.close()
+        # return the result
+        return result
+
+
+# pull all the spells in a given spellbook
+def get_spellbook_spells(spellbook_id=None):
+    # create result variable
+    result = None
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        # create query string
+        if spellbook_id is not None:
+            query = "SELECT * FROM preparedSpells WHERE spellbook_id = ? ORDER BY prepared_spell_id"
+            # execute our query
+            cursor.execute(query, spellbook_id)
+        else:
+            query = "SELECT * FROM preparedSpells ORDER BY prepared_spell_id"
+            # execute our query
+            cursor.execute(query)
+
+        # use cursor to fetch the results of the query
+        result = cursor.fetchall()
+    finally:
+        # close our database connection
+        connection.close()
+        # return the result
+        return result
+
+
+# update an existing spellbook
+def update_spellbook(spellbook_id, spell_casting_class, spell_casting_level):
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        # create query string using parameterization to protect against SQL injection
+        query = "UPDATE spellbooks SET spell_casting_class = ?, spell_casting_level = ? WHERE spellbook_id = ?"
+        # execute our query and commit the changes to the database
+        cursor.execute(query, spell_casting_class, spell_casting_level, spellbook_id)
+        cursor.commit()
+    finally:
+        # close our database connection
+        connection.close()
+
+
+# add a new spell to an existing spellbook
+def add_spell(spellbook_id, spell_index):
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        # create query string using parameterization to protect against SQL injection
+        query = """INSERT INTO preparedSpells VALUES (default, ?, ?)"""
+        # execute our query and commit the changes to the database
+        cursor.execute(query, spellbook_id, spell_index)
+        cursor.commit()
+    finally:
+        # close our database connection
+        connection.close()
+
+
+# pull a specific spell from the database
+def get_spellbook(spellbook_id):
+    # create result variable
+    result = None
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        # create query string using parameterization to protect against SQL injection
+        query = "SELECT * FROM spellbooks WHERE spellbook_id = ?"
+        # execute our query
+        cursor.execute(query, spellbook_id)
+        # fetch the results of the query
+        result = cursor.fetchone()
+    finally:
+        # close our database connection
+        connection.close()
+        # return the result
+        return result
