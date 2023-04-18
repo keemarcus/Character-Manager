@@ -5,10 +5,10 @@ from pyodbc import connect
 import os
 
 # get db credentials from system variables so that they aren't exposed in code
-db_url = os.environ['db_url']
-db_username = os.environ['db_username']
-db_password = os.environ['db_password']
-db_name = ''
+#db_url = os.environ['db_url']
+#db_username = os.environ['db_username']
+#db_password = os.environ['db_password']
+#db_name = ''
 
 
 # this function will return a new connection to the database
