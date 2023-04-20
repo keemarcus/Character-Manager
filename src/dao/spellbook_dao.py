@@ -66,6 +66,27 @@ def get_spellbook_spells(spellbook_id=None):
         return result
 
 
+# pull a specific spell from a given spellbook
+def get_spellbook_spell(spellbook_id, spell_index):
+    # create result variable
+    result = None
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        # create query string
+        query = "SELECT * FROM preparedSpells WHERE spellbook_id = ? AND spell_index = ?"
+        # execute our query
+        cursor.execute(query, spellbook_id, spell_index)
+        # use cursor to fetch the results of the query
+        result = cursor.fetchone()
+    finally:
+        # close our database connection
+        connection.close()
+        # return the result
+        return result
+
+
 # update an existing spellbook
 def update_spellbook(spellbook_id, spell_casting_class, spell_casting_level):
     try:
@@ -98,22 +119,17 @@ def add_spell(spellbook_id, spell_index):
         connection.close()
 
 
-# pull a specific spell from the database
-def get_spellbook(spellbook_id):
-    # create result variable
-    result = None
+# delete an existing spell from a spellbook
+def delete_spell(spellbook_id, spell_index):
     try:
         # set up a new database connection and cursor
         connection = dbconfig.get_connection()
         cursor = connection.cursor()
         # create query string using parameterization to protect against SQL injection
-        query = "SELECT * FROM spellbooks WHERE spellbook_id = ?"
-        # execute our query
-        cursor.execute(query, spellbook_id)
-        # fetch the results of the query
-        result = cursor.fetchone()
+        query = """DELETE FROM preparedSpells WHERE spellbook_id = ? AND spell_index = ?"""
+        # execute our query and commit the changes to the database
+        cursor.execute(query, spellbook_id, spell_index)
+        cursor.commit()
     finally:
         # close our database connection
         connection.close()
-        # return the result
-        return result

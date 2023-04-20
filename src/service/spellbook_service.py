@@ -1,4 +1,6 @@
 # import our reimbursement dao logic
+import pyodbc
+
 import src.dao.spellbook_dao as dao
 
 # import our reimbursement logic
@@ -47,7 +49,17 @@ def get_spellbook_spells(spellbook_id=None):
 
 
 def add_spell(spellbook_id, spell_index):
+    # check to see if the spell already exists in the spellbook
+    if type(dao.get_spellbook_spell(spellbook_id, spell_index)) == pyodbc.Row:
+        return "That spell already exists in that spellbook"
     dao.add_spell(spellbook_id, spell_index)
+
+
+def delete_spell(spellbook_id, spell_index):
+    # check to see if the spell exists in the spellbook
+    if type(dao.get_spellbook_spell(spellbook_id, spell_index)) != pyodbc.Row:
+        return "That spell doesn't exist in that spellbook"
+    dao.delete_spell(spellbook_id, spell_index)
 
 
 # verify that the selected reimbursement exists then update it using our dao functions

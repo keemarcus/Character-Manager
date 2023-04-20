@@ -18,12 +18,12 @@ create table preparedSpells(
 );
 
 insert into spellBooks
-	values(1, 'Wizard', 10),
-	(2, 'Paladin', 5),
-	(3, 'Druid', 12);
+	values(default, 'Wizard', 10),
+	(default, 'Paladin', 5),
+	(default, 'Druid', 12);
 	
 
 insert into preparedSpells
-	values(1, 1, 'acid-splash'),
-	(2, 1, 'mage-hand'),
-	(3, 1, 'chill-touch');
+	values(default, 1, 'acid-splash'),
+	(default, 1, 'mage-hand'),
+	(default, 1, 'chill-touch');

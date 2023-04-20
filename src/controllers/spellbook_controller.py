@@ -53,6 +53,16 @@ def add_spell(spellbook_id, spell_index):
     return result, 200
 
 
+@app.route('/spellbooks/<int:spellbook_id>/<string:spell_index>', methods=['DELETE'])
+def delete_spell(spellbook_id, spell_index):
+    # use service layer logic to get results
+    result = service.delete_spell(spellbook_id, spell_index)
+    result = dumps(result, cls=SpellbookEncoder)
+
+    # return the result in json form
+    return result, 200
+
+
 @app.route('/spellbooks/spells/<int:spellbook_id>', methods=['GET'])
 def get_spellbook_spells(spellbook_id):
     # use service layer logic to get results
