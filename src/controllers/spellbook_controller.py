@@ -14,23 +14,48 @@ from json import dumps
 import logging
 
 
-@app.route('/reimbursements', methods=['POST'])
+@app.route('/spellbooks', methods=['POST'])
 def create_spellbook():
-    employee_id = session.get('user_id')
-    amount = request.form.get('amount')
-    reason = request.form.get('reason')
-    date = datetime.datetime.now().replace(microsecond=0)
+    spellbook_id = session.get('spellbook_id')
+    spell_casting_class = request.form.get('spell_casting_class')
+    spell_casting_level = request.form.get('spell_casting_level')
+    #date = datetime.datetime.now().replace(microsecond=0)
 
     # call service function to create new reimbursement
-    service.create_reimbursement(employee_id, amount, reason, date)
+    if spellbook_id is None:
+        result = service.create_spellbook(spell_casting_class, spell_casting_level)
+    else:
+        result = service.create_spellbook(spell_casting_class, spell_casting_level, spellbook_id)
 
-    # log creation of new reimbursement
-    reimbursement_logger.info(f"""Created new reimbursement for user: {employee_id}, 
-                                  Amount: {amount}, Reason: {reason}, 
-                                  Created: {date}.""")
+    # return the result in json form
+    result = dumps(result, cls=SpellbookEncoder)
+    return result, 200
 
     # send the user to the reimbursements page
     return redirect('http://localhost:5000/reimbursements.html')
+
+
+@app.route('/spellbooks/<int:spellbook_id>', methods=['DELETE'])
+def delete_spellbook(spellbook_id):
+    # call service function to create new reimbursement
+    result = service.delete_spellbook(spellbook_id)
+
+    # return the result in json form
+    result = dumps(result, cls=SpellbookEncoder)
+    return result, 200
+
+
+@app.route('/spellbooks/<int:spellbook_id>', methods=['PATCH'])
+def update_spellbook(spellbook_id):
+    spell_casting_class = request.form.get('spell_casting_class')
+    spell_casting_level = request.form.get('spell_casting_level')
+
+    # call service function to create new reimbursement
+    result = service.update_spellbook(spellbook_id, spell_casting_class, spell_casting_level)
+
+    # return the result in json form
+    result = dumps(result, cls=SpellbookEncoder)
+    return result, 200
 
 
 @app.route('/spellbooks/<int:spellbook_id>', methods=['GET'])

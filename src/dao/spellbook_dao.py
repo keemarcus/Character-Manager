@@ -3,15 +3,36 @@ from utils import dbconfig
 
 
 # add a new spellbook to the database
-def create_spellbook(spellbook_id, spell_casting_class, spell_casting_level, spells=[None]):
+def create_spellbook(spell_casting_class, spell_casting_level, spellbook_id="default"):
     try:
         # set up a new database connection and cursor
         connection = dbconfig.get_connection()
         cursor = connection.cursor()
         # create query string using parameterization to protect against SQL injection
-        query = "INSERT INTO spellbooks VALUES (default, ?, ?, ?, ?, ?, ?, ?, ?)"
+        if spellbook_id == "default":
+            query = "INSERT INTO spellbooks VALUES (default, ?, ?)"
+            # execute our query and commit the changes to the database
+            cursor.execute(query, spell_casting_class, spell_casting_level)
+        else:
+            query = "INSERT INTO spellbooks VALUES (?, ?, ?)"
+            # execute our query and commit the changes to the database
+            cursor.execute(query, spellbook_id, spell_casting_class, spell_casting_level)
+        cursor.commit()
+    finally:
+        # close our database connection
+        connection.close()
+
+
+# delete an existing spell from a spellbook
+def delete_spellbook(spellbook_id):
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        # create query string using parameterization to protect against SQL injection
+        query = "DELETE FROM spellbooks WHERE spellbook_id = ?"
         # execute our query and commit the changes to the database
-        cursor.execute(query, spellbook_id, spell_casting_class, spell_casting_level, spells)
+        cursor.execute(query, spellbook_id)
         cursor.commit()
     finally:
         # close our database connection
@@ -94,7 +115,7 @@ def update_spellbook(spellbook_id, spell_casting_class, spell_casting_level):
         connection = dbconfig.get_connection()
         cursor = connection.cursor()
         # create query string using parameterization to protect against SQL injection
-        query = "UPDATE spellbooks SET spell_casting_class = ?, spell_casting_level = ? WHERE spellbook_id = ?"
+        query = "UPDATE spellbooks SET spell_casting_class = ?, class_level = ? WHERE spellbook_id = ?"
         # execute our query and commit the changes to the database
         cursor.execute(query, spell_casting_class, spell_casting_level, spellbook_id)
         cursor.commit()
@@ -110,7 +131,7 @@ def add_spell(spellbook_id, spell_index):
         connection = dbconfig.get_connection()
         cursor = connection.cursor()
         # create query string using parameterization to protect against SQL injection
-        query = """INSERT INTO preparedSpells VALUES (default, ?, ?)"""
+        query = "INSERT INTO preparedSpells VALUES (default, ?, ?)"
         # execute our query and commit the changes to the database
         cursor.execute(query, spellbook_id, spell_index)
         cursor.commit()
@@ -126,7 +147,7 @@ def delete_spell(spellbook_id, spell_index):
         connection = dbconfig.get_connection()
         cursor = connection.cursor()
         # create query string using parameterization to protect against SQL injection
-        query = """DELETE FROM preparedSpells WHERE spellbook_id = ? AND spell_index = ?"""
+        query = "DELETE FROM preparedSpells WHERE spellbook_id = ? AND spell_index = ?"
         # execute our query and commit the changes to the database
         cursor.execute(query, spellbook_id, spell_index)
         cursor.commit()

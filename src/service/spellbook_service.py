@@ -8,8 +8,16 @@ from src.models.spellbook import SpellBook
 
 
 # we don't need any business logic for this function, so we simply call our dao function
-def create_spellbook(spellbook_id, spell_casting_class, spell_casting_level, spells=[None]):
-    dao.create_spellbook(spellbook_id, spell_casting_class, spell_casting_level, spells)
+def create_spellbook(spell_casting_class, spell_casting_level, spellbook_id="default"):
+    dao.create_spellbook(spell_casting_class, spell_casting_level, spellbook_id)
+
+
+def delete_spellbook(spellbook_id):
+    dao.delete_spellbook(spellbook_id)
+
+
+def update_spellbook(spellbook_id, spell_casting_class, spell_casting_level):
+    dao.update_spellbook(spellbook_id, spell_casting_class, spell_casting_level)
 
 
 # call get reimbursement function from dao layer and convert it to usable data
