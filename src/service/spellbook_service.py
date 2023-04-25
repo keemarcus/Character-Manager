@@ -1,5 +1,6 @@
 # import our reimbursement dao logic
 import pyodbc
+import requests
 
 import src.dao.spellbook_dao as dao
 
@@ -8,16 +9,46 @@ from src.models.spellbook import SpellBook
 
 
 # we don't need any business logic for this function, so we simply call our dao function
-def create_spellbook(spell_casting_class, spell_casting_level, spellbook_id="default"):
-    dao.create_spellbook(spell_casting_class, spell_casting_level, spellbook_id)
+def create_spellbook(user_id, character_id, spell_casting_class, spell_casting_level, spellbook_id="default"):
+    # validate user id
+    if dao.get_user(user_id) is None:
+        return "That user does not exist"
+    # validate character id
+    if dao.get_character(character_id) is not None:
+        return "That spellbook already exists"
+    # validate class
+    if (requests.get("https://www.dnd5eapi.co/api/classes/" + spell_casting_class).status_code // 100) != 2:
+        return "That class does not exist"
+    # validate level
+    if spell_casting_level < 1 or spell_casting_level > 20:
+        return "That spellcasting level is invalid"
+    dao.create_spellbook(user_id, character_id, spell_casting_class, spell_casting_level, spellbook_id)
 
 
 def delete_spellbook(spellbook_id):
+    # validate spellbook id
+    if dao.get_spellbook(spellbook_id) is None:
+        return "That spellbook does not exist"
     dao.delete_spellbook(spellbook_id)
 
 
-def update_spellbook(spellbook_id, spell_casting_class, spell_casting_level):
-    dao.update_spellbook(spellbook_id, spell_casting_class, spell_casting_level)
+def update_spellbook(spellbook_id, user_id, character_id, spell_casting_class, spell_casting_level):
+    # validate spellbook id
+    if dao.get_spellbook(spellbook_id) is None:
+        return "That spellbook does not exist"
+    # validate user id
+    if dao.get_user(user_id) is None:
+        return "That user does not exist"
+    # validate character id
+    if dao.get_character(character_id) is None:
+        return "That spellbook does not exist"
+    # validate class
+    if (requests.get("https://www.dnd5eapi.co/api/classes/" + spell_casting_class).status_code // 100) != 2:
+        return "That class does not exist"
+    # validate level
+    if spell_casting_level < 1 or spell_casting_level > 20:
+        return "That spellcasting level is invalid"
+    dao.update_spellbook(spellbook_id, user_id, character_id, spell_casting_class, spell_casting_level)
 
 
 # call get reimbursement function from dao layer and convert it to usable data
@@ -35,6 +66,8 @@ def get_spellbook(spellbook_id):
         db_spellbook[0],
         db_spellbook[1],
         db_spellbook[2],
+        db_spellbook[3],
+        db_spellbook[4],
         spells
     )
 

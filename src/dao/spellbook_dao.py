@@ -3,20 +3,37 @@ from utils import dbconfig
 
 
 # add a new spellbook to the database
-def create_spellbook(spell_casting_class, spell_casting_level, spellbook_id="default"):
+def create_spellbook(user_id, character_id, spell_casting_class, spell_casting_level, spellbook_id="default"):
     try:
         # set up a new database connection and cursor
         connection = dbconfig.get_connection()
         cursor = connection.cursor()
         # create query string using parameterization to protect against SQL injection
         if spellbook_id == "default":
-            query = "INSERT INTO spellbooks VALUES (default, ?, ?)"
+            query = "INSERT INTO spellbooks VALUES (default, ?, ?, ?, ?)"
             # execute our query and commit the changes to the database
-            cursor.execute(query, spell_casting_class, spell_casting_level)
+            cursor.execute(query, user_id, character_id, spell_casting_class, spell_casting_level)
         else:
-            query = "INSERT INTO spellbooks VALUES (?, ?, ?)"
+            query = "INSERT INTO spellbooks VALUES (?, ?, ?, ?, ?)"
             # execute our query and commit the changes to the database
-            cursor.execute(query, spellbook_id, spell_casting_class, spell_casting_level)
+            cursor.execute(query, spellbook_id, user_id, character_id, spell_casting_class, spell_casting_level)
+        cursor.commit()
+    finally:
+        # close our database connection
+        connection.close()
+
+
+# update an existing spellbook
+def update_spellbook(spellbook_id, user_id, character_id, spell_casting_class, spell_casting_level):
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        # create query string using parameterization to protect against SQL injection
+        query = """UPDATE spellbooks SET user_id = ?, character_id = ?, spell_casting_class = ?, class_level = ? 
+                    WHERE spellbook_id = ?"""
+        # execute our query and commit the changes to the database
+        cursor.execute(query, user_id, character_id, spell_casting_class, spell_casting_level, spellbook_id)
         cursor.commit()
     finally:
         # close our database connection
@@ -108,22 +125,6 @@ def get_spellbook_spell(spellbook_id, spell_index):
         return result
 
 
-# update an existing spellbook
-def update_spellbook(spellbook_id, spell_casting_class, spell_casting_level):
-    try:
-        # set up a new database connection and cursor
-        connection = dbconfig.get_connection()
-        cursor = connection.cursor()
-        # create query string using parameterization to protect against SQL injection
-        query = "UPDATE spellbooks SET spell_casting_class = ?, class_level = ? WHERE spellbook_id = ?"
-        # execute our query and commit the changes to the database
-        cursor.execute(query, spell_casting_class, spell_casting_level, spellbook_id)
-        cursor.commit()
-    finally:
-        # close our database connection
-        connection.close()
-
-
 # add a new spell to an existing spellbook
 def add_spell(spellbook_id, spell_index):
     try:
@@ -154,3 +155,43 @@ def delete_spell(spellbook_id, spell_index):
     finally:
         # close our database connection
         connection.close()
+
+
+def get_user(user_id):
+    # create result variable
+    result = None
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        # create query string
+        query = "SELECT * FROM users WHERE user_id = ?"
+        # execute our query
+        cursor.execute(query, user_id)
+        # use cursor to fetch the results of the query
+        result = cursor.fetchone()
+    finally:
+        # close our database connection
+        connection.close()
+        # return the result
+        return result
+
+
+def get_character(character_id):
+    # create result variable
+    result = None
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        # create query string
+        query = "SELECT * FROM spellbooks WHERE character_id = ?"
+        # execute our query
+        cursor.execute(query, character_id)
+        # use cursor to fetch the results of the query
+        result = cursor.fetchone()
+    finally:
+        # close our database connection
+        connection.close()
+        # return the result
+        return result

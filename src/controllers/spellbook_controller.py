@@ -16,16 +16,18 @@ import logging
 
 @app.route('/spellbooks', methods=['POST'])
 def create_spellbook():
-    spellbook_id = session.get('spellbook_id')
-    spell_casting_class = request.form.get('spell_casting_class')
-    spell_casting_level = request.form.get('spell_casting_level')
+    spellbook_id = request.form.get('spellbook_id')
+    user_id = int(request.form.get('user_id'))
+    character_id = str(request.form.get('character_id'))
+    spell_casting_class = str(request.form.get('spell_casting_class'))
+    spell_casting_level = int(request.form.get('spell_casting_level'))
     #date = datetime.datetime.now().replace(microsecond=0)
 
     # call service function to create new reimbursement
-    if spellbook_id is None:
-        result = service.create_spellbook(spell_casting_class, spell_casting_level)
+    if spellbook_id is None or spellbook_id == "":
+        result = service.create_spellbook(user_id, character_id, spell_casting_class, spell_casting_level)
     else:
-        result = service.create_spellbook(spell_casting_class, spell_casting_level, spellbook_id)
+        result = service.create_spellbook(user_id, character_id, spell_casting_class, spell_casting_level, spellbook_id)
 
     # return the result in json form
     result = dumps(result, cls=SpellbookEncoder)
@@ -47,11 +49,13 @@ def delete_spellbook(spellbook_id):
 
 @app.route('/spellbooks/<int:spellbook_id>', methods=['PATCH'])
 def update_spellbook(spellbook_id):
-    spell_casting_class = request.form.get('spell_casting_class')
-    spell_casting_level = request.form.get('spell_casting_level')
+    user_id = int(request.form.get('user_id'))
+    character_id = str(request.form.get('character_id'))
+    spell_casting_class = str(request.form.get('spell_casting_class'))
+    spell_casting_level = int(request.form.get('spell_casting_level'))
 
     # call service function to create new reimbursement
-    result = service.update_spellbook(spellbook_id, spell_casting_class, spell_casting_level)
+    result = service.update_spellbook(spellbook_id, user_id, character_id, spell_casting_class, spell_casting_level)
 
     # return the result in json form
     result = dumps(result, cls=SpellbookEncoder)
