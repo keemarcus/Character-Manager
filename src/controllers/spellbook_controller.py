@@ -94,6 +94,7 @@ def delete_spell(spellbook_id, spell_index):
 
 @app.route('/spellbooks/spells/<int:spellbook_id>', methods=['GET'])
 def get_spellbook_spells(spellbook_id):
+    print(spellbook_id)
     # use service layer logic to get results
     result = service.get_spellbook_spells(spellbook_id)
 

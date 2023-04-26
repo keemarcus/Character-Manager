@@ -55,6 +55,7 @@ def update_spellbook(spellbook_id, user_id, character_id, spell_casting_class, s
 def get_spellbook(spellbook_id):
     # get result from dao
     db_spellbook = dao.get_spellbook(spellbook_id)
+    print(db_spellbook)
     db_spellbook_spells = dao.get_spellbook_spells(spellbook_id)
 
     spells = ''
@@ -77,19 +78,21 @@ def get_spellbook(spellbook_id):
 
 def get_spellbook_spells(spellbook_id=None):
     # dao.get_spellbook_spells()
-
     # get results from dao
-    db_spellbook_spells = dao.get_spellbook_spells()
-
+    db_spellbook_spells = dao.get_spellbook_spells(spellbook_id)
     spells = ''
     for row in db_spellbook_spells:
         spells += row[2] + ','
+    spells = spells[:-1]
 
     # return the result
     return spells
 
 
 def add_spell(spellbook_id, spell_index):
+    # validate spell
+    if (requests.get("https://www.dnd5eapi.co/api/spells/" + spell_index).status_code // 100) != 2:
+        return "That spell does not exist"
     # check to see if the spell already exists in the spellbook
     if type(dao.get_spellbook_spell(spellbook_id, spell_index)) == pyodbc.Row:
         return "That spell already exists in that spellbook"
@@ -101,16 +104,3 @@ def delete_spell(spellbook_id, spell_index):
     if type(dao.get_spellbook_spell(spellbook_id, spell_index)) != pyodbc.Row:
         return "That spell doesn't exist in that spellbook"
     dao.delete_spell(spellbook_id, spell_index)
-
-
-# verify that the selected reimbursement exists then update it using our dao functions
-def update_reimbursement(reimbursement_id, amount, reason, date_created):
-    # use get reimbursement function to see if the id is associated with an existing reimbursement
-    if dao.get_reimbursement(reimbursement_id) is None:
-        return "404 Not Found: No such reimbursement exists with that ID", 404
-    else:
-        # use the update reimbursement function to make the desired changes in the database
-        dao.update_reimbursement(reimbursement_id, amount, reason, date_created)
-
-        # return success message
-        return "Reimbursement updated successfully.", 201
