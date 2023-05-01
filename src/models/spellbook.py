@@ -4,7 +4,7 @@ from json import JSONEncoder
 
 class SpellBook:
     # constructor
-    def __init__(self, spellbook_id, user_id, character_id, spell_casting_class, spell_casting_level, spells=[None]):
+    def __init__(self, spellbook_id, user_id, character_id, spell_casting_class, spell_casting_level, spells=None):
         self._spellbook_id = spellbook_id
         self._user_id = user_id
         self._character_id = character_id
@@ -29,7 +29,7 @@ class SpellBook:
         return self._spell_casting_level
 
     def get_spells(self):
-        return self.spells
+        return self._spells
 
     # setters
     def set_spellbook_id(self, spellbook_id):

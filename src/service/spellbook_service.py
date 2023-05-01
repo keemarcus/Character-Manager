@@ -55,12 +55,15 @@ def update_spellbook(spellbook_id, user_id, character_id, spell_casting_class, s
 def get_spellbook(spellbook_id):
     # get result from dao
     db_spellbook = dao.get_spellbook(spellbook_id)
-    print(db_spellbook)
+    if db_spellbook is None:
+        return None
     db_spellbook_spells = dao.get_spellbook_spells(spellbook_id)
 
     spells = ''
     for row in db_spellbook_spells:
         spells += row[2] + ','
+    if len(spells) > 0:
+        spells = spells[:-1]
 
     # create a Spellbook object for the result
     spellbook = SpellBook(
