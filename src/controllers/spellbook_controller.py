@@ -14,6 +14,18 @@ from json import dumps
 import logging
 
 
+@app.route('/spellbooks/cast', methods=['POST'])
+def cast_spell():
+    spellbook_id = request.form.get('spellbook_id')
+    character_id = str(request.form.get('character_id'))
+    spell_index = str(request.form.get('spell_index'))
+    spell_level = int(request.form.get('spell_level'))
+
+    # return the result in json form
+    result = service.cast_spell(character_id, spellbook_id, spell_index, spell_level)
+    return result
+
+
 @app.route('/spellbooks', methods=['POST'])
 def create_spellbook():
     spellbook_id = request.form.get('spellbook_id')
@@ -21,7 +33,7 @@ def create_spellbook():
     character_id = str(request.form.get('character_id'))
     spell_casting_class = str(request.form.get('spell_casting_class'))
     spell_casting_level = int(request.form.get('spell_casting_level'))
-    #date = datetime.datetime.now().replace(microsecond=0)
+    # date = datetime.datetime.now().replace(microsecond=0)
 
     # call service function to create new reimbursement
     if spellbook_id is None or spellbook_id == "":

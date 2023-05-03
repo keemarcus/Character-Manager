@@ -18,12 +18,12 @@ class SpellBookServiceTests(unittest.TestCase):
         dao.add_spell = Mock()
         dao.delete_spell = Mock()
         dao.get_spellbook = Mock(side_effect=self.args_based_return)
-        #dao.get_spellbook = Mock(return_value=(1, 1, 'UserID-CharacterName-Class', 'wizard', 1))
+        # dao.get_spellbook = Mock(return_value=(1, 1, 'UserID-CharacterName-Class', 'wizard', 1))
         dao.get_spellbook_spells = Mock(side_effect=self.args_based_return_spells)
-        #dao.get_spellbook_spells = Mock(return_value=[(1, 1, 'acid-splash'), (2, 1, 'mage-hand'),
-                 #                                     (3, 1, 'chill-touch')])
+        # dao.get_spellbook_spells = Mock(return_value=[(1, 1, 'acid-splash'), (2, 1, 'mage-hand'),
+        #                                     (3, 1, 'chill-touch')])
         dao.get_spellbook_spell = Mock(side_effect=self.args_based_return)
-        #dao.get_spellbook_spell = Mock(return_value=(1, 1, 'acid-splash'))
+        # dao.get_spellbook_spell = Mock(return_value=(1, 1, 'acid-splash'))
         dao.get_user = Mock(side_effect=self.args_based_return)
         dao.get_character = Mock(side_effect=self.args_based_return)
 
@@ -132,8 +132,9 @@ class SpellBookServiceTests(unittest.TestCase):
 
     def args_based_return_spells(*args, **kwargs):
         if args.__contains__(1):
-            return [(1, 1, 'acid-splash'), (2, 1, 'mage-hand'),(3, 1, 'chill-touch')]
+            return [(1, 1, 'acid-splash'), (2, 1, 'mage-hand'), (3, 1, 'chill-touch')]
         elif args.__contains__(2):
             return None
         else:
             return Exception("exception occurred")
+

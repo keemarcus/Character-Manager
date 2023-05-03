@@ -8,7 +8,27 @@ import src.dao.spellbook_dao as dao
 from src.models.spellbook import SpellBook
 
 
-# we don't need any business logic for this function, so we simply call our dao function
+def cast_spell(character_id, spellbook_id, spell_index, spell_level):
+    # validate character id
+    if dao.get_character(character_id) is None:
+        return "That spellbook does not exists", 400
+    # validate spellbook id
+    if dao.get_spellbook(spellbook_id) is None:
+        return "That spellbook does not exist", 400
+    # validate spell
+    if (requests.get("https://www.dnd5eapi.co/api/spells/" + spell_index).status_code // 100) != 2:
+        return "That spell does not exist", 400
+    # check to see if the spell exists in the spellbook
+    if type(dao.get_spellbook_spell(spellbook_id, spell_index)) != pyodbc.Row:
+        return "That spell does not exists in that spellbook", 400
+    # check to make sure the spell can be cast at the given level
+    if requests.get("https://www.dnd5eapi.co/api/spells/" + spell_index).json()["level"] > spell_level:
+        return "That spell cannot be cast at that level", 400
+    # check to make sure the character has a spell slot available at the given level
+    # remove one available spell slot at the given level
+    return "Spell cast successfully", 200
+
+
 def create_spellbook(user_id, character_id, spell_casting_class, spell_casting_level, spellbook_id="default"):
     # validate user id
     if dao.get_user(user_id) is None:
