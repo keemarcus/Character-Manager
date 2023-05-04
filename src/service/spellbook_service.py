@@ -8,6 +8,12 @@ import src.dao.spellbook_dao as dao
 from src.models.spellbook import SpellBook
 
 
+def restore_spell_slots(spellbook_id):
+    # validate spellbook id
+    if dao.get_spellbook(spellbook_id) is None:
+        return "That spellbook does not exist", 400
+    dao.restore_all_spell_slots(spellbook_id)
+
 def cast_spell(character_id, spellbook_id, spell_index, spell_level):
     # validate character id
     if dao.get_character(character_id) is None:
@@ -25,7 +31,10 @@ def cast_spell(character_id, spellbook_id, spell_index, spell_level):
     if requests.get("https://www.dnd5eapi.co/api/spells/" + spell_index).json()["level"] > spell_level:
         return "That spell cannot be cast at that level", 400
     # check to make sure the character has a spell slot available at the given level
+    if not dao.check_for_spell_slot(spellbook_id, spell_level):
+        return "No spell slots available at that level", 400
     # remove one available spell slot at the given level
+    dao.expend_spell_slot(spellbook_id, spell_level)
     return "Spell cast successfully", 200
 
 

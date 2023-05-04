@@ -14,6 +14,15 @@ from json import dumps
 import logging
 
 
+@app.route('/spellbooks/restore/<int:spellbook_id>', methods=['POST'])
+def restore_spell_slots(spellbook_id):
+    result = service.restore_spell_slots(spellbook_id)
+    result = dumps(result, cls=SpellbookEncoder)
+
+    # return the result in json form
+    return result, 200
+
+
 @app.route('/spellbooks/cast', methods=['POST'])
 def cast_spell():
     spellbook_id = request.form.get('spellbook_id')

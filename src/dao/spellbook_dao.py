@@ -2,6 +2,78 @@
 from utils import dbconfig
 
 
+# expend spell slot
+def expend_spell_slot(spellbook_id, spell_level):
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        # create query string using parameterization to protect against SQL injection
+        query = "UPDATE spellSlots SET slots_available = slots_available - 1 WHERE spellbook_id = ? AND spell_level = ?"
+        # execute our query
+        cursor.execute(query, spellbook_id, spell_level)
+        cursor.commit()
+    finally:
+        # close our database connection
+        connection.close()
+        # return the result
+
+
+# restore spell slot
+def restore_spell_slot(spellbook_id, spell_level):
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        # create query string using parameterization to protect against SQL injection
+        query = "UPDATE spellSlots SET slots_available = slots_available + 1 WHERE spellbook_id = ? AND spell_level = ?"
+        # execute our query
+        cursor.execute(query, spellbook_id, spell_level)
+        cursor.commit()
+    finally:
+        # close our database connection
+        connection.close()
+        # return the result
+
+
+# restore all spell slots
+def restore_all_spell_slots(spellbook_id):
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        # create query string using parameterization to protect against SQL injection
+        query = "UPDATE spellSlots SET slots_available = slots_total WHERE spellbook_id = ?"
+        # execute our query
+        cursor.execute(query, spellbook_id)
+        cursor.commit()
+    finally:
+        # close our database connection
+        connection.close()
+        # return the result
+
+
+# check spell slot
+def check_for_spell_slot(spellbook_id, spell_level):
+    # create result variable
+    result = None
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        # create query string using parameterization to protect against SQL injection
+        query = "SELECT slots_available FROM spellSlots WHERE spellbook_id = ? AND spell_level = ?"
+        # execute our query
+        cursor.execute(query, spellbook_id, spell_level)
+        # fetch the results of the query
+        result = cursor.fetchone()
+    finally:
+        # close our database connection
+        connection.close()
+        # return the result
+        return result[0] > 0
+
+
 # add a new spellbook to the database
 def create_spellbook(user_id, character_id, spell_casting_class, spell_casting_level, spellbook_id="default"):
     try:
