@@ -14,6 +14,7 @@ def restore_spell_slots(spellbook_id):
         return "That spellbook does not exist", 400
     dao.restore_all_spell_slots(spellbook_id)
 
+
 def cast_spell(character_id, spellbook_id, spell_index, spell_level):
     # validate character id
     if dao.get_character(character_id) is None:
