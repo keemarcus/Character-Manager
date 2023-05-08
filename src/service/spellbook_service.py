@@ -8,6 +8,20 @@ import src.dao.spellbook_dao as dao
 from src.models.spellbook import SpellBook
 
 
+# call get reimbursement function from dao layer and convert it to usable data
+def get_spellbook_slots(spellbook_id):
+    # get result from dao
+    db_spell_slots = dao.get_spell_slots(spellbook_id)
+    if db_spell_slots is None:
+        return None
+
+    spell_slots = {}
+    for row in db_spell_slots:
+        spell_slots[str(row[2]) + "_available"] = row[4]
+        spell_slots[str(row[2]) + "_total"] = row[3]
+    return spell_slots
+
+
 def restore_spell_slots(spellbook_id):
     # validate spellbook id
     if dao.get_spellbook(spellbook_id) is None:

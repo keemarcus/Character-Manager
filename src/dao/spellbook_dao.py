@@ -54,6 +54,27 @@ def restore_all_spell_slots(spellbook_id):
 
 
 # check spell slot
+def get_spell_slots(spellbook_id):
+    # create result variable
+    result = None
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        # create query string using parameterization to protect against SQL injection
+        query = "SELECT * FROM spellSlots WHERE spellbook_id = ?"
+        # execute our query
+        cursor.execute(query, spellbook_id)
+        # fetch the results of the query
+        result = cursor.fetchall()
+    finally:
+        # close our database connection
+        connection.close()
+        # return the result
+        return result
+
+
+# check spell slot
 def check_for_spell_slot(spellbook_id, spell_level):
     # create result variable
     result = None
@@ -71,7 +92,10 @@ def check_for_spell_slot(spellbook_id, spell_level):
         # close our database connection
         connection.close()
         # return the result
-        return result[0] > 0
+        if result is None:
+            return False
+        else:
+            return result[0] > 0
 
 
 # add a new spellbook to the database

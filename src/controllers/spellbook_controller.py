@@ -21,10 +21,20 @@ def spellbook(spellbook_id):
     return redirect('../spellbook.html')
 
 
+@app.route('/spellbooks/slots/<int:spellbook_id>', methods=['GET'])
+def get_spellbook_slots(spellbook_id):
+    # use service layer logic to get results
+    result = service.get_spellbook_slots(spellbook_id)
+    result = dumps(result, cls=SpellbookEncoder)
+
+    # return the result in json form
+    return result, 200
+
+
 @app.route('/spellbooks/restore/<int:spellbook_id>', methods=['POST'])
 def restore_spell_slots(spellbook_id):
     result = service.restore_spell_slots(spellbook_id)
-    result = dumps(result, cls=SpellbookEncoder)
+    result = dumps(result)
 
     # return the result in json form
     return result, 200
