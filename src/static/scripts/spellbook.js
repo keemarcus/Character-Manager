@@ -1,3 +1,4 @@
+const available_spell_slots = new Object()
 set_up_page()
 
 async function set_up_page() {
@@ -45,6 +46,8 @@ async function set_up_page() {
             slot_level_cell.innerText = i
             slots_available_cell.innerText = spell_slots[i.toString() + "_available"]
             slots_total_cell.innerText = spell_slots[i.toString() + "_total"]
+
+            available_spell_slots[i] = spell_slots[i.toString() + "_available"]
         }
 
         // use fetch to get the spells in the current spellbook
@@ -72,22 +75,28 @@ async function set_up_page() {
 
             // insert the data into the new row
             name_cell.innerText = spell_info["name"]
-            //cast_cell.innerHTML = '<button type="button">Cast</button>'
-            var btn = document.createElement('input')
-            btn.type = "button"
-            btn.className = "btn"
-            btn.value = "Cast"
-            btn.name
-            btn.setAttribute('onclick', 'javascript: cast_spell(' + spellbook_id + ', "' + spells_stats['_character_id'] + '", "' + spell_list[spelll] + '", ' + spell_info['level'] + ');' );
-            //btn.onclick = function() { cast_spell(spellbook_id.value, spells_stats["_character_id"].value, spell_list[spelll]., spell_info["level"].value); };
-            //btn.addEventListener("click", function() {
-            //    cast_spell(spellbook_id, spells_stats["_character_id"], spell_list[spelll], spell_info["level"])
-            //}, false)
-            cast_cell.appendChild(btn)
-
             level_cell.innerText = spell_info["level"]
             if(spell_info["higher_level"].length > 0){
                 level_cell.innerText += "+"
+            }
+            // set up cast buttons
+            if(level_cell.innerText.includes("+")){
+                for(let spell_level = spell_info["level"]; spell_level <= Object.keys(available_spell_slots).length; spell_level){
+                    if(available_spell_slots[spell_level] > 0){
+                        var btn = document.createElement('input')
+                        btn.type = "button"
+                        btn.value = "Cast at level " + spell_level 
+                        btn.setAttribute('onclick', 'javascript: cast_spell(' + spellbook_id + ', "' + spells_stats['_character_id'] + '", "' + spell_list[spelll] + '", ' + spell_level + ');' );
+                        cast_cell.appendChild(btn)
+                    }
+                    spell_level++
+                }
+            }else if (spell_info["level"] == 0 || available_spell_slots[spell_info["level"]] > 0){
+                var btn = document.createElement('input')
+                btn.type = "button"
+                btn.value = "Cast"
+                btn.setAttribute('onclick', 'javascript: cast_spell(' + spellbook_id + ', "' + spells_stats['_character_id'] + '", "' + spell_list[spelll] + '", ' + spell_info['level'] + ');' );
+                cast_cell.appendChild(btn)
             }
             components_cell.innerText = spell_info["components"].join(", ")
             duration_cell.innerText = spell_info["duration"]
@@ -104,8 +113,6 @@ function cast_spell(spellbook_id, character_id, spell_index, spell_level){
     formData.append("character_id", character_id);
     formData.append("spell_index", spell_index);
     formData.append("spell_level", spell_level);
-    console.log(spell_index)
-    console.log(formData)
     
     const request = new XMLHttpRequest();
     request.open("POST", "http://localhost:5000/spellbooks/cast");
@@ -113,4 +120,5 @@ function cast_spell(spellbook_id, character_id, spell_index, spell_level){
 
     location.reload()
 }
+
 
