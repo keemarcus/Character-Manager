@@ -183,11 +183,11 @@ def get_spellbook_spells(spellbook_id=None):
         cursor = connection.cursor()
         # create query string
         if spellbook_id is not None:
-            query = "SELECT * FROM preparedSpells WHERE spellbook_id = ? ORDER BY prepared_spell_id"
+            query = "SELECT * FROM preparedSpells WHERE spellbook_id = ? ORDER BY spell_level"
             # execute our query
             cursor.execute(query, spellbook_id)
         else:
-            query = "SELECT * FROM preparedSpells ORDER BY prepared_spell_id"
+            query = "SELECT * FROM preparedSpells ORDER BY spell_level"
             # execute our query
             cursor.execute(query)
 
@@ -209,7 +209,7 @@ def get_spellbook_spell(spellbook_id, spell_index):
         connection = dbconfig.get_connection()
         cursor = connection.cursor()
         # create query string
-        query = "SELECT * FROM preparedSpells WHERE spellbook_id = ? AND spell_index = ?"
+        query = "SELECT * FROM preparedSpells WHERE spellbook_id = ? AND spell_index = ? ORDER BY spell_level"
         # execute our query
         cursor.execute(query, spellbook_id, spell_index)
         # use cursor to fetch the results of the query
@@ -222,15 +222,15 @@ def get_spellbook_spell(spellbook_id, spell_index):
 
 
 # add a new spell to an existing spellbook
-def add_spell(spellbook_id, spell_index):
+def add_spell(spellbook_id, spell_index, spell_level):
     try:
         # set up a new database connection and cursor
         connection = dbconfig.get_connection()
         cursor = connection.cursor()
         # create query string using parameterization to protect against SQL injection
-        query = "INSERT INTO preparedSpells VALUES (default, ?, ?)"
+        query = "INSERT INTO preparedSpells VALUES (default, ?, ?, ?)"
         # execute our query and commit the changes to the database
-        cursor.execute(query, spellbook_id, spell_index)
+        cursor.execute(query, spellbook_id, spell_index, spell_level)
         cursor.commit()
     finally:
         # close our database connection

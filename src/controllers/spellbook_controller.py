@@ -110,10 +110,10 @@ def get_spellbook(spellbook_id):
     return result, 200
 
 
-@app.route('/spellbooks/<int:spellbook_id>/<string:spell_index>', methods=['POST'])
-def add_spell(spellbook_id, spell_index):
+@app.route('/spellbooks/<int:spellbook_id>/<string:spell_index>//<string:spell_level>/', methods=['POST'])
+def add_spell(spellbook_id, spell_index, spell_level):
     # use service layer logic to get results
-    result = service.add_spell(spellbook_id, spell_index)
+    result = service.add_spell(spellbook_id, spell_index, spell_level)
     result = dumps(result, cls=SpellbookEncoder)
 
     # return the result in json form

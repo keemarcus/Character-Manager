@@ -35,6 +35,7 @@ create table preparedSpells(
 	prepared_spell_id bigserial primary key,
 	spellbook_id int not null,
 	spell_index varchar not null,
+	spell_level int not null,
 	foreign key (spellbook_id)
 		references spellBooks (spellbook_id)
 		on delete cascade
@@ -58,6 +59,6 @@ insert into spellSlots values
 	(default, 1, 5, 2, 2);
 	
 insert into preparedSpells values
-	(default, 1, 'acid-splash'),
-	(default, 1, 'mage-hand'),
-	(default, 1, 'chill-touch');
+	(default, 1, 'acid-splash', 0),
+	(default, 1, 'mage-hand', 0),
+	(default, 1, 'chill-touch', 0);

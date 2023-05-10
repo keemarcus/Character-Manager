@@ -34,13 +34,15 @@ async function set_up_page() {
         response = await fetch(url)
         spell_slots= await response.json()
 
-        let slots_table = document.getElementById('slots table')
+        let slot_level_row = document.getElementById('slot level row')
+        let total_slots_row = document.getElementById('total slots row')
+        let available_slots_row = document.getElementById('available slots row')
         for(let i = 1; i <= (Object.keys(spell_slots).length / 2); i++) {
             // create new table row
-            let row = slots_table.insertRow(-1)
-            let slot_level_cell = row.insertCell(0)
-            let slots_available_cell = row.insertCell(1)
-            let slots_total_cell = row.insertCell(2)
+            let slot_level_cell = document.createElement("th")
+            slot_level_row.appendChild(slot_level_cell)
+            let slots_available_cell = available_slots_row.insertCell(-1)
+            let slots_total_cell = total_slots_row.insertCell(-1)
 
             // insert the data into the new row
             slot_level_cell.innerText = i
@@ -72,10 +74,16 @@ async function set_up_page() {
             let duration_cell = row.insertCell(4)
             let range_cell = row.insertCell(5)
             let desc_cell = row.insertCell(6)
+            desc_cell.classList.add("desc")
 
             // insert the data into the new row
             name_cell.innerText = spell_info["name"]
-            level_cell.innerText = spell_info["level"]
+            if(spell_info["level"] == 0){
+                level_cell.innerText = "Cantrip"
+            }else{
+                level_cell.innerText = spell_info["level"]
+            }
+            
             if(spell_info["higher_level"].length > 0){
                 level_cell.innerText += "+"
             }
@@ -88,6 +96,8 @@ async function set_up_page() {
                         btn.value = "Cast at level " + spell_level 
                         btn.setAttribute('onclick', 'javascript: cast_spell(' + spellbook_id + ', "' + spells_stats['_character_id'] + '", "' + spell_list[spelll] + '", ' + spell_level + ');' );
                         cast_cell.appendChild(btn)
+                        linebreak = document.createElement("br");
+                        cast_cell.appendChild(linebreak);
                     }
                     spell_level++
                 }
@@ -99,9 +109,21 @@ async function set_up_page() {
                 cast_cell.appendChild(btn)
             }
             components_cell.innerText = spell_info["components"].join(", ")
+            if(components_cell.innerText.includes('M')){
+                components_cell.innerText += " (" + spell_info["material"].replace('.', '') + ")" 
+            }
             duration_cell.innerText = spell_info["duration"]
             range_cell.innerText = spell_info["range"]
-            desc_cell.innerText = spell_info["desc"].join('\n')
+            console.log(spell_info["desc"])
+            let spell_desc = document.createElement("ul")
+            spell_desc.classList.add("desc")
+            for(line in spell_info["desc"]){
+                let spell_desc_line = document.createElement("li")
+                spell_desc_line.classList.add("desc")
+                spell_desc_line.innerText = spell_info["desc"][line]
+                spell_desc.appendChild(spell_desc_line)
+            }
+            desc_cell.appendChild(spell_desc)
         }
     }
 }
