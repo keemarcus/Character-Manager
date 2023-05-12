@@ -58,8 +58,8 @@ def create_spellbook(user_id, character_id, spell_casting_class, spell_casting_l
     if dao.get_user(user_id) is None:
         return "That user does not exist"
     # validate character id
-    if dao.get_character(character_id) is not None:
-        return "That spellbook already exists"
+    if dao.get_character(character_id) is None:
+        return "That character does not exists"
     # validate class
     if (requests.get("https://www.dnd5eapi.co/api/classes/" + spell_casting_class).status_code // 100) != 2:
         return "That class does not exist"
@@ -85,7 +85,7 @@ def update_spellbook(spellbook_id, user_id, character_id, spell_casting_class, s
         return "That user does not exist"
     # validate character id
     if dao.get_character(character_id) is None:
-        return "That spellbook does not exist"
+        return "That character does not exist"
     # validate class
     if (requests.get("https://www.dnd5eapi.co/api/classes/" + spell_casting_class).status_code // 100) != 2:
         return "That class does not exist"

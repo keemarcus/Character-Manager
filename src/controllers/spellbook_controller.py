@@ -56,7 +56,7 @@ def cast_spell():
 def create_spellbook():
     spellbook_id = request.form.get('spellbook_id')
     user_id = int(request.form.get('user_id'))
-    character_id = str(request.form.get('character_id'))
+    character_id = int(request.form.get('character_id'))
     spell_casting_class = str(request.form.get('spell_casting_class'))
     spell_casting_level = int(request.form.get('spell_casting_level'))
     # date = datetime.datetime.now().replace(microsecond=0)
@@ -88,7 +88,7 @@ def delete_spellbook(spellbook_id):
 @app.route('/spellbooks/<int:spellbook_id>', methods=['PATCH'])
 def update_spellbook(spellbook_id):
     user_id = int(request.form.get('user_id'))
-    character_id = str(request.form.get('character_id'))
+    character_id = int(request.form.get('character_id'))
     spell_casting_class = str(request.form.get('spell_casting_class'))
     spell_casting_level = int(request.form.get('spell_casting_level'))
 
@@ -138,21 +138,3 @@ def get_spellbook_spells(spellbook_id):
     # return the result in json form
     return result, 200
 
-
-@app.route('/reimbursements/<int:reimbursement_id>', methods=['POST'])
-def update_reimbursement(reimbursement_id):
-    # get data from request form
-    amount = request.form.get('amount')
-    reason = request.form.get('reason')
-    date = datetime.datetime.now().replace(microsecond=0)
-
-    # use service layer logic to update the reimbursement
-    service.update_reimbursement(reimbursement_id, amount, reason, date)
-
-    # log update of reimbursement
-    reimbursement_logger.info(f"""Updated reimbursement with ID: {reimbursement_id}, 
-                                      Amount: {amount}, Reason: {reason}, 
-                                      Updated: {date}.""")
-
-    # return the user to the page they were just on
-    return redirect(request.referrer)
