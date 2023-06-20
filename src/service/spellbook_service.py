@@ -136,14 +136,15 @@ def get_spellbook_spells(spellbook_id=None):
     return spells
 
 
-def add_spell(spellbook_id, spell_index, spell_level):
+def add_spell(spellbook_id, spell_index):
     # validate spell
-    if (requests.get("https://www.dnd5eapi.co/api/spells/" + spell_index).status_code // 100) != 2:
+    spell = requests.get("https://www.dnd5eapi.co/api/spells/" + spell_index)
+    if (spell.status_code // 100) != 2:
         return "That spell does not exist"
     # check to see if the spell already exists in the spellbook
     if type(dao.get_spellbook_spell(spellbook_id, spell_index)) == pyodbc.Row:
         return "That spell already exists in that spellbook"
-    dao.add_spell(spellbook_id, spell_index, spell_level)
+    dao.add_spell(spellbook_id, spell_index, spell.json()["level"])
 
 
 def delete_spell(spellbook_id, spell_index):

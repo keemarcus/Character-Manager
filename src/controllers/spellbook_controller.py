@@ -21,6 +21,13 @@ def spellbook(spellbook_id):
     return redirect('../spellbook.html')
 
 
+# redirect to our static home page
+@app.route('/add_spell/<int:spellbook_id>', methods=['GET'])
+def add_spell_page(spellbook_id):
+    session['spellbook_id'] = spellbook_id
+    return redirect('../add_spell.html')
+
+
 @app.route('/spellbooks/slots/<int:spellbook_id>', methods=['GET'])
 def get_spellbook_slots(spellbook_id):
     # use service layer logic to get results
@@ -110,10 +117,10 @@ def get_spellbook(spellbook_id):
     return result, 200
 
 
-@app.route('/spellbooks/<int:spellbook_id>/<string:spell_index>//<string:spell_level>/', methods=['POST'])
-def add_spell(spellbook_id, spell_index, spell_level):
+@app.route('/spellbooks/<int:spellbook_id>/<string:spell_index>', methods=['POST'])
+def add_spell(spellbook_id, spell_index):
     # use service layer logic to get results
-    result = service.add_spell(spellbook_id, spell_index, spell_level)
+    result = service.add_spell(spellbook_id, spell_index)
     result = dumps(result, cls=SpellbookEncoder)
 
     # return the result in json form

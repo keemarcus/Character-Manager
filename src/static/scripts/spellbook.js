@@ -25,7 +25,7 @@ async function set_up_page() {
         let level_cell = row.insertCell(2)
 
         // insert the data into the new row
-        character_cell.innerText = spells_stats["_character_id"].split('-')[1]
+        character_cell.innerText = spells_stats["_character_id"].toString().split('-')[1]
         class_cell.innerText = spells_stats["_spell_casting_class"].charAt(0).toUpperCase() + spells_stats["_spell_casting_class"].substring(1)
         level_cell.innerText = spells_stats["_spell_casting_level"]
 
@@ -56,14 +56,14 @@ async function set_up_page() {
         url = "http://localhost:5000/spellbooks/spells/" + spellbook_id
         response = await fetch(url)
         spells = await response.text()
-        const spell_list = spells.split(",")
+        const spell_list = spells.toString().split(",")
         let table = document.getElementById('spell table')
         for (spelll in spell_list){
             // get the full spell info
             let url = "https://www.dnd5eapi.co/api/spells/" + spell_list[spelll]
             let response = await fetch(url)
             spell_info = await response.json()
-            //console.log(spell_info)
+            if(!spell_info["desc"]){break}
 
             // create new table row
             let row = table.insertRow(-1)
