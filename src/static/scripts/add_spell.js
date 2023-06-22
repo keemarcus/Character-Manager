@@ -127,20 +127,21 @@ async function set_up_page() {
             // desc_cell.appendChild(spell_desc)
         }
 
-        // use fetch to get the spells available to add to the current spellbook
-        // figure out what to do about cantrips later
+        // use fetch to get the spells available to add to the current spellbook 
+        get_cantrips(spells_stats["_spell_casting_class"])       
         for (spell_slot_level of spell_slot_levels.values()) {
-            console.log(spell_slot_level)
+            //console.log(spell_slot_level)
 
             // use fetch to get the available spells at the given level
             url = "https://www.dnd5eapi.co/api/classes/" + spells_stats["_spell_casting_class"] + "/levels/" + spell_slot_level + "/spells"
             response = await fetch(url)
             available_spells = await response.json()
-            console.log(available_spells)
+            //console.log(available_spells)
 
             let add_table = document.getElementById('available spells table')
+
             for (available_spell in available_spells["results"]) {
-                console.log(available_spells["results"][available_spell])
+                //console.log(available_spells["results"][available_spell])
                 if ((document.documentElement.textContent || document.documentElement.innerText).indexOf(available_spells["results"][available_spell]["name"]) > -1) {
                     continue
                 }
@@ -169,6 +170,60 @@ async function set_up_page() {
                 remove_cell.appendChild(btn)
             }
         }
+    }
+}
+
+async function get_cantrips(class_name){
+    let add_table = document.getElementById('available spells table')
+
+    // use fetch to get all the spells available for the class
+    let url = "https://www.dnd5eapi.co/api/classes/" + class_name + "/spells"
+    let response = await fetch(url)
+    all_spells = await response.json()
+
+    let cantrips = new Set()
+
+    for(cantrip in all_spells["results"]){
+        cantrips.add(all_spells["results"][cantrip]["name"])
+    }
+
+    for(i = 1; i < 10; i++){
+        // use fetch to get all the non-cantrip spells available for the class
+        url = "https://www.dnd5eapi.co/api/classes/" + class_name + "/levels/" + i + "/spells"
+        response = await fetch(url)
+        non_cantrips = await response.json()
+
+        for(spell in non_cantrips["results"]){
+            cantrips.delete(non_cantrips["results"][spell]["name"])
+        }
+    }
+
+    console.log(cantrips)
+
+    for (cantrip of cantrips.values()) {
+        console.log(cantrip)
+        //console.log(available_spells["results"][available_spell])
+        if ((document.documentElement.textContent || document.table.documentElement.innerText.indexOf(cantrip) > -1) {
+            console.log("skipping")
+            continue
+        }
+
+        // create new table row
+        let row = add_table.insertRow(0)
+        let name_cell = row.insertCell(0)
+        let level_cell = row.insertCell(1)
+        let remove_cell = row.insertCell(2)
+
+        // insert the data into the new row
+        name_cell.innerText = cantrip
+        level_cell.innerText = "Cantrip"
+        
+        // add the button to remove the spell from the spellbook
+        var btn = document.createElement('input')
+        btn.type = "button"
+        btn.value = "Add"
+        btn.setAttribute('onclick', 'javascript: add_spell(' + spellbook_id + ', "' + available_spells["results"][available_spell]["index"] + '");');
+        remove_cell.appendChild(btn)
     }
 }
 
