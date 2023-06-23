@@ -1,6 +1,9 @@
+var prepared_spells
 set_up_page()
 
 async function set_up_page() {
+    prepared_spells = new Set()
+
     // use fetch to get the id of the current spellbook
     let url = "http://localhost:5000/session/spellbook_id"
     let response = await fetch(url)
@@ -9,8 +12,6 @@ async function set_up_page() {
     if (spellbook_id === 'None') {
         console.log("No spellbook id found")
     } else {
-        console.log(spellbook_id)
-
         // use fetch to get the spell stats
         let url = "http://localhost:5000/spellbooks/" + spellbook_id
         let response = await fetch(url)
@@ -95,6 +96,7 @@ async function set_up_page() {
 
             // insert the data into the new row
             name_cell.innerText = spell_info["name"]
+            prepared_spells.add(spell_info["name"])
             if (spell_info["level"] == 0) {
                 level_cell.innerText = "Cantrip"
             } else {
@@ -142,7 +144,7 @@ async function set_up_page() {
 
             for (available_spell in available_spells["results"]) {
                 //console.log(available_spells["results"][available_spell])
-                if ((document.documentElement.textContent || document.documentElement.innerText).indexOf(available_spells["results"][available_spell]["name"]) > -1) {
+                if (prepared_spells.has(available_spells["results"][available_spell]["name"])) {
                     continue
                 }
 
@@ -198,13 +200,9 @@ async function get_cantrips(class_name){
         }
     }
 
-    console.log(cantrips)
-
     for (cantrip of cantrips.values()) {
-        console.log(cantrip)
         //console.log(available_spells["results"][available_spell])
-        if ((document.documentElement.textContent || document.table.documentElement.innerText.indexOf(cantrip) > -1) {
-            console.log("skipping")
+        if (prepared_spells.has(cantrip)) {
             continue
         }
 
@@ -222,7 +220,7 @@ async function get_cantrips(class_name){
         var btn = document.createElement('input')
         btn.type = "button"
         btn.value = "Add"
-        btn.setAttribute('onclick', 'javascript: add_spell(' + spellbook_id + ', "' + available_spells["results"][available_spell]["index"] + '");');
+        btn.setAttribute('onclick', 'javascript: add_spell(' + spellbook_id + ', "' + cantrip.replaceAll(' ', '-').toLowerCase() + '");');
         remove_cell.appendChild(btn)
     }
 }
