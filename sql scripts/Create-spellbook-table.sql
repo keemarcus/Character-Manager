@@ -3,6 +3,30 @@ drop table if exists spellSlots;
 drop table if exists spellbooks;
 drop table if exists chars;
 drop table if exists users;
+drop table if exists spells;
+
+create table spells(
+	spell_index varchar primary key,
+	spell_name varchar not null,
+	spell_level int not null,
+	spell_classes varchar not null,
+	spell_subclasses varchar,
+	spell_school varchar not null,
+	spell_casting_time varchar not null,
+	spell_range varchar,
+	spell_duration varchar not null,
+	spell_components varchar not null,
+	spell_materials varchar,
+	spell_concentration varchar,
+	spell_desc varchar not null,
+	spell_ritual varchar,
+	spell_dc varchar,
+	spell_higher_level varchar,
+	spell_damage varchar,
+	spell_area_of_effect varchar,
+	spell_heal_at_slot_level varchar,
+	spell_attack_type varchar
+);
 
 create table users(
 	user_id bigserial primary key
