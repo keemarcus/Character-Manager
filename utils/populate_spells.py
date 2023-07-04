@@ -63,7 +63,7 @@ for spell in spells["results"]:
             connection = dbconfig.get_connection()
             cursor = connection.cursor()
             # create query string using parameterization to protect against SQL injection
-            query = "INSERT INTO spells VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            query = "INSERT INTO spells VALUES (?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
             # execute our query and commit the changes to the database
             cursor.execute(query, spell_data['index'], spell_data['name'], spell_data['level'], spell_data['classes'],
                            spell_data['subclasses'], spell_data['school'], spell_data['casting_time'],

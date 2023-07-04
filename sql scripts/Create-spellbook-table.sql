@@ -2,11 +2,16 @@ drop table if exists preparedSpells;
 drop table if exists spellSlots;
 drop table if exists spellbooks;
 drop table if exists chars;
-drop table if exists users;
 drop table if exists spells;
+drop table if exists users;
+
+create table users(
+	user_id bigserial primary key
+);
 
 create table spells(
 	spell_index varchar primary key,
+	user_id int not null,
 	spell_name varchar not null,
 	spell_level int not null,
 	spell_classes varchar not null,
@@ -25,11 +30,11 @@ create table spells(
 	spell_damage varchar,
 	spell_area_of_effect varchar,
 	spell_heal_at_slot_level varchar,
-	spell_attack_type varchar
-);
-
-create table users(
-	user_id bigserial primary key
+	spell_attack_type varchar,
+	foreign key (user_id)
+		references users (user_id)
+		on delete cascade
+		on update cascade
 );
 
 create table chars(
@@ -88,6 +93,7 @@ create table preparedSpells(
 );
 
 insert into users values
+	(0),
 	(default),
 	(default);
 
