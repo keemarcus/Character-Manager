@@ -3,21 +3,25 @@ from utils import dbconfig
 
 
 # add a new spell to the database
-def create_spell(index, name, desc, spell_range, components, duration, concentration, casting_time, level, school,
-                 classes, subclasses, dc, higher_level, ritual, damage, attack_type):
+def create_spell(spell):
     try:
         # set up a new database connection and cursor
         connection = dbconfig.get_connection()
         cursor = connection.cursor()
         # create query string using parameterization to protect against SQL injection
-        query = "INSERT INTO spells VALUES (default, ?, ?, ?, ?, ?, ?, ?, ?)"
+        query = "INSERT INTO spells VALUES (?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         # execute our query and commit the changes to the database
-        cursor.execute(query, index, name, desc, spell_range, components, duration, concentration, casting_time, level,
-                       school, classes, subclasses, dc, higher_level, ritual, damage, attack_type)
+        cursor.execute(query, spell.get_index(), spell.get_name(), spell.get_level(), spell.get_classes(),
+                       spell.get_subclasses(), spell.get_school(), spell.get_casting_time(), spell.get_range(),
+                       spell.get_duration(), spell.get_components(), spell.get_material(), spell.get_concentration(),
+                       spell.get_desc(), spell.get_ritual(), spell.get_dc(), spell.get_higher_level(),
+                       spell.get_damage(), spell.get_area_of_effect(), spell.get_heal_at_slot_level(),
+                       spell.get_attack_type())
         cursor.commit()
     finally:
         # close our database connection
         connection.close()
+    return "Adding Spell: " + spell.get_name()
 
 
 # pull a specific spell from the database
