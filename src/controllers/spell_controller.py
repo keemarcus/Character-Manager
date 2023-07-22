@@ -22,10 +22,11 @@ def get_spell(spell_index):
 def create_spell():
     spell_data = request.json
     result = service.create_spell(spell_data['index'], spell_data['user_id'], spell_data['name'], spell_data['level'],
-                         spell_data['classes'], spell_data['subclasses'], spell_data['school'],
-                         spell_data['casting_time'], spell_data['range'], spell_data['duration'],
-                         spell_data['components'], spell_data['material'], spell_data['concentration'],
-                         spell_data['desc'], spell_data['ritual'], spell_data['dc'], spell_data['higher_level'],
-                         spell_data['damage'], spell_data['area_of_effect'], spell_data['heal_at_slot_level'],
-                         spell_data['attack_type'])
+                                  spell_data['classes'], spell_data['subclasses'], spell_data['school'],
+                                  spell_data['casting_time'], spell_data['range'], spell_data['duration'],
+                                  spell_data['components'], spell_data['material'], spell_data['concentration'],
+                                  spell_data['desc'], spell_data['ritual'], spell_data['dc'],
+                                  spell_data['higher_level'],
+                                  spell_data['damage'], spell_data['area_of_effect'], spell_data['heal_at_slot_level'],
+                                  spell_data['attack_type'])
     return result, 200

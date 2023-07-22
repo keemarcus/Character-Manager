@@ -38,6 +38,14 @@ for spell in spells["results"]:
             for entry in spell_info[field]:
                 data += entry["index"] + " - "
             spell_data[field] = data[:-3]
+        elif field in ['higher_level', 'desc']:
+            if len(str(spell_info[field])) == 2:
+                spell_data[field] = None
+            else:
+                spell_data[field] = str(spell_info[field]).replace('["', '').replace("']", '').replace('"]', '')\
+                    .replace("['", '').replace(", '", ', "')
+        elif field == 'components':
+            spell_data[field] = str(spell_info[field]).replace('[', '').replace(']', '').replace("'", '')
         elif field == 'school':
             spell_data[field] = spell_info[field]['index']
         else:

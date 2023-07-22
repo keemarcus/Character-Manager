@@ -46,6 +46,8 @@ def cast_spell(character_id, spellbook_id, spell_index, spell_level):
     if requests.get("https://www.dnd5eapi.co/api/spells/" + spell_index).json()["level"] > spell_level:
         return "That spell cannot be cast at that level", 400
     # check to make sure the character has a spell slot available at the given level
+    if spell_level == 0:
+        return "Spell cast successfully", 200
     if not dao.check_for_spell_slot(spellbook_id, spell_level):
         return "No spell slots available at that level", 400
     # remove one available spell slot at the given level
