@@ -15,10 +15,10 @@ async function set_up_page() {
         // use fetch to get the spell stats
         let url = "http://localhost:5000/spellbooks/" + spellbook_id
         let response = await fetch(url)
-        spells_stats = await response.json()
+        character_stats = await response.json()
 
         // use fetch to get the number of spells and cantrips known
-        url = "https://www.dnd5eapi.co/api/classes/" + spells_stats["_spell_casting_class"] + "/levels/" + spells_stats["_spell_casting_level"]
+        url = "https://www.dnd5eapi.co/api/classes/" + character_stats["spell_casting_class"] + "/levels/" + character_stats["spell_casting_level"]
         response = await fetch(url)
         class_level_info = await response.json()
 
@@ -32,9 +32,9 @@ async function set_up_page() {
         let cantrips_known_cell = row.insertCell(4)
 
         // insert the data into the new row
-        character_cell.innerText = spells_stats["_character_id"].toString().split('-')[1]
-        class_cell.innerText = spells_stats["_spell_casting_class"].charAt(0).toUpperCase() + spells_stats["_spell_casting_class"].substring(1)
-        level_cell.innerText = spells_stats["_spell_casting_level"]
+        character_cell.innerText = character_stats["character_id"].toString().split('-')[1]
+        class_cell.innerText = character_stats["spell_casting_class"].charAt(0).toUpperCase() + character_stats["spell_casting_class"].substring(1)
+        level_cell.innerText = character_stats["spell_casting_level"]
         if (class_level_info["spellcasting"]["spells_known"]) {
             spells_known_cell.innerText = class_level_info["spellcasting"]["spells_known"]
         } else {
@@ -48,27 +48,8 @@ async function set_up_page() {
             // set a limit to the number of cantrips we can add to the spellbook
         }
 
-        // use fetch to get the spell slots
-        url = "http://localhost:5000/spellbooks/slots/" + spellbook_id
-        response = await fetch(url)
-        spell_slots = await response.json()
-
         let spell_slot_levels = new Set()
-
-        let slot_level_row = document.getElementById('slot level row')
-        let total_slots_row = document.getElementById('total slots row')
-        for (let i = 1; i <= (Object.keys(spell_slots).length / 2); i++) {
-            // create new table row
-            let slot_level_cell = document.createElement("th")
-            slot_level_row.appendChild(slot_level_cell)
-            let slots_total_cell = total_slots_row.insertCell(-1)
-
-            // insert the data into the new row
-            slot_level_cell.innerText = i
-            slots_total_cell.innerText = spell_slots[i.toString() + "_total"]
-
-            spell_slot_levels.add(slot_level_cell.innerText)
-        }
+        set_up_spell_slots(character_stats["spell_casting_class"], spell_slot_levels)
 
         // use fetch to get the spells already in the current spellbook
         url = "http://localhost:5000/spellbooks/spells/" + spellbook_id
@@ -130,12 +111,13 @@ async function set_up_page() {
         }
 
         // use fetch to get the spells available to add to the current spellbook 
-        get_cantrips(spells_stats["_spell_casting_class"])       
+        get_cantrips(character_stats["spell_casting_class"])      
+        console.log(spell_slot_levels)
         for (spell_slot_level of spell_slot_levels.values()) {
             //console.log(spell_slot_level)
 
             // use fetch to get the available spells at the given level
-            url = "https://www.dnd5eapi.co/api/classes/" + spells_stats["_spell_casting_class"] + "/levels/" + spell_slot_level + "/spells"
+            url = "https://www.dnd5eapi.co/api/classes/" + character_stats["spell_casting_class"] + "/levels/" + spell_slot_level + "/spells"
             response = await fetch(url)
             available_spells = await response.json()
             //console.log(available_spells)
@@ -171,6 +153,46 @@ async function set_up_page() {
                 btn.setAttribute('onclick', 'javascript: add_spell(' + spellbook_id + ', "' + available_spells["results"][available_spell]["index"] + '");');
                 remove_cell.appendChild(btn)
             }
+        }
+    }
+}
+
+async function set_up_spell_slots(spell_casting_class, spell_slot_levels){
+    // use fetch to get the spell slots
+    let url = "http://localhost:5000/spellbooks/slots/" + spellbook_id
+    let response = await fetch(url)
+    let spell_slots = await response.json()
+
+    let slot_level_row = document.getElementById('slot level row')
+    let total_slots_row = document.getElementById('total slots row')
+    
+
+    if(spell_casting_class == "warlock"){
+        i = parseInt(Object.keys(spell_slots)[0].split('_')[0])
+        // create new table row
+        let slot_level_cell = document.createElement("th")
+        slot_level_row.appendChild(slot_level_cell)
+        let slots_total_cell = total_slots_row.insertCell(-1)
+
+        // insert the data into the new row
+        slot_level_cell.innerText = i
+        slots_total_cell.innerText = spell_slots[i.toString() + "_total"]
+
+        for (let j = 1; j <= i; j++) {
+            spell_slot_levels.add(j)
+        }
+    }else{
+        for (let i = 1; i <= (Object.keys(spell_slots).length / 2); i++) {
+            // create new table row
+            let slot_level_cell = document.createElement("th")
+            slot_level_row.appendChild(slot_level_cell)
+            let slots_total_cell = total_slots_row.insertCell(-1)
+    
+            // insert the data into the new row
+            slot_level_cell.innerText = i
+            slots_total_cell.innerText = spell_slots[i.toString() + "_total"]
+    
+            spell_slot_levels.add(slot_level_cell.innerText)
         }
     }
 }

@@ -3,6 +3,7 @@ import pyodbc
 import requests
 
 import src.dao.spellbook_dao as dao
+import src.dao.character_dao as character_dao
 
 # import our reimbursement logic
 from src.models.spellbook import SpellBook
@@ -31,8 +32,8 @@ def restore_spell_slots(spellbook_id):
 
 def cast_spell(character_id, spellbook_id, spell_index, spell_level):
     # validate character id
-    if dao.get_character(character_id) is None:
-        return "That spellbook does not exists", 400
+    if character_dao.get_character(character_id) is None:
+        return "That character does not exists", 400
     # validate spellbook id
     if dao.get_spellbook(spellbook_id) is None:
         return "That spellbook does not exist", 400
@@ -60,7 +61,7 @@ def create_spellbook(user_id, character_id, spell_casting_class, spell_casting_l
     if dao.get_user(user_id) is None:
         return "That user does not exist"
     # validate character id
-    if dao.get_character(character_id) is None:
+    if character_dao.get_character(character_id) is None:
         return "That character does not exists"
     # validate class
     if (requests.get("https://www.dnd5eapi.co/api/classes/" + spell_casting_class).status_code // 100) != 2:
