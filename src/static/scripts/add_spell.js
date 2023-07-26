@@ -64,100 +64,14 @@ async function set_up_page() {
             spell_info = await response.json()
             if (!spell_info["desc"]) { break }
 
-            // create new table row
-            let row = table.insertRow(-1)
-            let name_cell = row.insertCell(0)
-            let level_cell = row.insertCell(1)
-            let remove_cell = row.insertCell(2)
-            // let components_cell = row.insertCell(3)
-            // let duration_cell = row.insertCell(4)
-            // let range_cell = row.insertCell(5)
-            // let desc_cell = row.insertCell(6)
-            // desc_cell.classList.add("desc")
-
-            // insert the data into the new row
-            name_cell.innerText = spell_info["name"]
-            prepared_spells.add(spell_info["name"])
-            if (spell_info["level"] == 0) {
-                level_cell.innerText = "Cantrip"
-            } else {
-                level_cell.innerText = spell_info["level"]
-            }
-            if (spell_info["higher_level"].length > 0) {
-                level_cell.innerText += "+"
-            }
-            // add the button to remove the spell from the spellbook
-            var btn = document.createElement('input')
-            btn.type = "button"
-            btn.value = "Remove"
-            btn.setAttribute('onclick', 'javascript: remove_spell(' + spellbook_id + ', "' + spell_list[spelll] + '");');
-            remove_cell.appendChild(btn)
-            // components_cell.innerText = spell_info["components"].join(", ")
-            // if(components_cell.innerText.includes('M')){
-            //     components_cell.innerText += " (" + spell_info["material"].replace('.', '') + ")" 
-            // }
-            // duration_cell.innerText = spell_info["duration"]
-            // range_cell.innerText = spell_info["range"]
-            // console.log(spell_info["desc"])
-            // let spell_desc = document.createElement("ul")
-            // spell_desc.classList.add("desc")
-            // for(line in spell_info["desc"]){
-            //     let spell_desc_line = document.createElement("li")
-            //     spell_desc_line.classList.add("desc")
-            //     spell_desc_line.innerText = spell_info["desc"][line]
-            //     spell_desc.appendChild(spell_desc_line)
-            // }
-            // desc_cell.appendChild(spell_desc)
+            add_known_spell(spell_info, table, character_stats["spell_casting_class"])
         }
 
-        // use fetch to get the spells available to add to the current spellbook 
-        get_cantrips(character_stats["spell_casting_class"])      
-        console.log(spell_slot_levels)
-        for (spell_slot_level of spell_slot_levels.values()) {
-            //console.log(spell_slot_level)
-
-            // use fetch to get the available spells at the given level
-            url = "https://www.dnd5eapi.co/api/classes/" + character_stats["spell_casting_class"] + "/levels/" + spell_slot_level + "/spells"
-            response = await fetch(url)
-            available_spells = await response.json()
-            //console.log(available_spells)
-
-            let add_table = document.getElementById('available spells table')
-
-            for (available_spell in available_spells["results"]) {
-                //console.log(available_spells["results"][available_spell])
-                if (prepared_spells.has(available_spells["results"][available_spell]["name"])) {
-                    continue
-                }
-
-                // create new table row
-                let row = add_table.insertRow(-1)
-                let name_cell = row.insertCell(0)
-                let level_cell = row.insertCell(1)
-                let remove_cell = row.insertCell(2)
-
-                // insert the data into the new row
-                name_cell.innerText = available_spells["results"][available_spell]["name"]
-                if (spell_slot_level == 0) {
-                    level_cell.innerText = "Cantrip"
-                } else {
-                    level_cell.innerText = spell_slot_level
-                }
-                // if (spell_info["higher_level"].length > 0) {
-                //     level_cell.innerText += "+"
-                // }
-                // add the button to remove the spell from the spellbook
-                var btn = document.createElement('input')
-                btn.type = "button"
-                btn.value = "Add"
-                btn.setAttribute('onclick', 'javascript: add_spell(' + spellbook_id + ', "' + available_spells["results"][available_spell]["index"] + '");');
-                remove_cell.appendChild(btn)
-            }
-        }
+        get_spells(character_stats["spell_casting_class"], 0, character_stats["spell_slot_level"])
     }
 }
 
-async function set_up_spell_slots(spell_casting_class, spell_slot_levels){
+async function set_up_spell_slots(spell_casting_class){
     // use fetch to get the spell slots
     let url = "http://localhost:5000/spellbooks/slots/" + spellbook_id
     let response = await fetch(url)
@@ -165,7 +79,6 @@ async function set_up_spell_slots(spell_casting_class, spell_slot_levels){
 
     let slot_level_row = document.getElementById('slot level row')
     let total_slots_row = document.getElementById('total slots row')
-    
 
     if(spell_casting_class == "warlock"){
         i = parseInt(Object.keys(spell_slots)[0].split('_')[0])
@@ -178,11 +91,9 @@ async function set_up_spell_slots(spell_casting_class, spell_slot_levels){
         slot_level_cell.innerText = i
         slots_total_cell.innerText = spell_slots[i.toString() + "_total"]
 
-        for (let j = 1; j <= i; j++) {
-            spell_slot_levels.add(j)
-        }
+        character_stats["spell_slot_level"] = i
     }else{
-        for (let i = 1; i <= (Object.keys(spell_slots).length / 2); i++) {
+        for(let i = 1; i <= (Object.keys(spell_slots).length / 2); i++) {
             // create new table row
             let slot_level_cell = document.createElement("th")
             slot_level_row.appendChild(slot_level_cell)
@@ -191,58 +102,49 @@ async function set_up_spell_slots(spell_casting_class, spell_slot_levels){
             // insert the data into the new row
             slot_level_cell.innerText = i
             slots_total_cell.innerText = spell_slots[i.toString() + "_total"]
-    
-            spell_slot_levels.add(slot_level_cell.innerText)
+            
+            character_stats["spell_slot_level"] = i
         }
     }
 }
 
-async function get_cantrips(class_name){
+async function get_spells(class_name, user_id, level){
     let add_table = document.getElementById('available spells table')
+    //let ctr = 0
 
     // use fetch to get all the spells available for the class
-    let url = "https://www.dnd5eapi.co/api/classes/" + class_name + "/spells"
+    let url = "http://localhost:5000/spells/class/" + class_name + "/level/" + level
     let response = await fetch(url)
     all_spells = await response.json()
 
-    let cantrips = new Set()
-
-    for(cantrip in all_spells["results"]){
-        cantrips.add(all_spells["results"][cantrip]["name"])
-    }
-
-    for(i = 1; i < 10; i++){
-        // use fetch to get all the non-cantrip spells available for the class
-        url = "https://www.dnd5eapi.co/api/classes/" + class_name + "/levels/" + i + "/spells"
-        response = await fetch(url)
-        non_cantrips = await response.json()
-
-        for(spell in non_cantrips["results"]){
-            cantrips.delete(non_cantrips["results"][spell]["name"])
-        }
-    }
-
-    for (cantrip of cantrips.values()) {
-        //console.log(available_spells["results"][available_spell])
-        if (prepared_spells.has(cantrip)) {
+    for (spell in all_spells) {
+        // ctr ++
+        // console.log(all_spells[spell])
+        // console.log(ctr)
+        if (prepared_spells.has(all_spells[spell]["name"])) {
+            //console.log("already know")
             continue
         }
 
         // create new table row
-        let row = add_table.insertRow(0)
+        let row = add_table.insertRow(-1)
         let name_cell = row.insertCell(0)
         let level_cell = row.insertCell(1)
         let remove_cell = row.insertCell(2)
 
         // insert the data into the new row
-        name_cell.innerText = cantrip
-        level_cell.innerText = "Cantrip"
-        
-        // add the button to remove the spell from the spellbook
+        name_cell.innerText = all_spells[spell]["name"]
+        if (all_spells[spell]["level"] == 0) {
+            level_cell.innerText = "Cantrip"
+        } else {
+            level_cell.innerText = all_spells[spell]["level"]
+        }
+
+        // add the button to add the spell t0 the spellbook
         var btn = document.createElement('input')
         btn.type = "button"
         btn.value = "Add"
-        btn.setAttribute('onclick', 'javascript: add_spell(' + spellbook_id + ', "' + cantrip.replaceAll(' ', '-').toLowerCase() + '");');
+        btn.setAttribute('onclick', 'javascript: add_spell(' + spellbook_id + ', "' + all_spells[spell]["index"] + '");');
         remove_cell.appendChild(btn)
     }
 }
@@ -261,4 +163,32 @@ function add_spell(spellbook_id, spell_index) {
     request.send(null);
 
     location.reload()
+}
+
+function add_known_spell(spell_info, table, spell_casting_class){
+    // create new table row
+    let row = table.insertRow(-1)
+    let name_cell = row.insertCell(0)
+    let level_cell = row.insertCell(1)
+    let remove_cell = row.insertCell(2)
+
+    // insert the data into the new row
+    name_cell.innerText = spell_info["name"]
+    if(spell_info["level"] == 0){
+        level_cell.innerText = "Cantrip"
+    }else{
+        level_cell.innerText = spell_info["level"]
+    }
+    
+    if(spell_info["higher_level"]){
+        level_cell.innerText += "+"
+    }
+    // add the button to remove the spell from the spellbook
+    var btn = document.createElement('input')
+    btn.type = "button"
+    btn.value = "Remove"
+    btn.setAttribute('onclick', 'javascript: remove_spell(' + spellbook_id + ', "' + spell_info["index"] + '");');
+    remove_cell.appendChild(btn)
+
+    prepared_spells.add(spell_info["name"])
 }

@@ -18,6 +18,26 @@ def get_spell(spell_index):
     return result, 200
 
 
+@app.route('/spells/class/<string:class_name>', methods=['GET'])
+def get_spells(class_name):
+    # use service layer logic to get results
+    result = service.get_spells(class_name)
+    result = dumps(result, cls=SpellEncoder)
+
+    # return the result in json form
+    return result, 200
+
+
+@app.route('/spells/class/<string:class_name>/level/<int:level>', methods=['GET'])
+def get_spells_level(class_name, level):
+    # use service layer logic to get results
+    result = service.get_spells(class_name, None, level)
+    result = dumps(result, cls=SpellEncoder)
+
+    # return the result in json form
+    return result, 200
+
+
 @app.route('/spells', methods=['POST'])
 def create_spell():
     spell_data = request.json

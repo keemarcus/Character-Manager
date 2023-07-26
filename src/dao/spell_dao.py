@@ -43,3 +43,31 @@ def get_spell(spell_index):
         connection.close()
         # return the result
         return result
+
+
+# pull all the available spells for a given class
+def get_spells(class_name, user_id=None, level=None):
+    # create result variable
+    result = None
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        if level:
+            # create query string using parameterization to protect against SQL injection
+            query = "SELECT * FROM spells WHERE spell_classes like ? and user_id = 0  and spell_level <= ? " \
+                    "ORDER BY spell_level ASC"
+            # execute our query
+            cursor.execute(query, '%' + class_name + '%', level)
+        else:
+            # create query string using parameterization to protect against SQL injection
+            query = "SELECT * FROM spells WHERE spell_classes like ? and user_id = 0 ORDER BY spell_level ASC"
+            # execute our query
+            cursor.execute(query, '%' + class_name + '%')
+        # fetch the results of the query
+        result = cursor.fetchall()
+    finally:
+        # close our database connection
+        connection.close()
+        # return the result
+        return result
