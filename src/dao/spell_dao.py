@@ -53,12 +53,23 @@ def get_spells(class_name, user_id=None, level=None):
         # set up a new database connection and cursor
         connection = dbconfig.get_connection()
         cursor = connection.cursor()
-        if level:
+        if user_id & level:
+            # create query string using parameterization to protect against SQL injection
+            query = "SELECT * FROM spells WHERE spell_classes like ? and user_id IN (0,?)  and spell_level <= ? " \
+                    "ORDER BY spell_level ASC"
+            # execute our query
+            cursor.execute(query, '%' + class_name + '%', user_id, level)
+        elif level:
             # create query string using parameterization to protect against SQL injection
             query = "SELECT * FROM spells WHERE spell_classes like ? and user_id = 0  and spell_level <= ? " \
                     "ORDER BY spell_level ASC"
             # execute our query
             cursor.execute(query, '%' + class_name + '%', level)
+        elif user_id:
+            # create query string using parameterization to protect against SQL injection
+            query = "SELECT * FROM spells WHERE spell_classes like ? and user_id IN (0,?) ORDER BY spell_level ASC"
+            # execute our query
+            cursor.execute(query, '%' + class_name + '%', user_id)
         else:
             # create query string using parameterization to protect against SQL injection
             query = "SELECT * FROM spells WHERE spell_classes like ? and user_id = 0 ORDER BY spell_level ASC"

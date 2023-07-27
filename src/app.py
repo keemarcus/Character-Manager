@@ -13,5 +13,10 @@ def home():
 
 
 @app.route('/session/spellbook_id', methods=['GET'])
-def session_info_id():
+def session_spellbook_id():
     return str(session.get('spellbook_id'))
+
+
+@app.route('/session/user_id', methods=['GET'])
+def session_user_id():
+    return str(session.get('user_id'))

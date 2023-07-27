@@ -9,6 +9,11 @@ async function set_up_page() {
     let response = await fetch(url)
     spellbook_id = await response.text()
 
+    // use fetch to get the id of the current user
+    url = "http://localhost:5000/session/user_id"
+    response = await fetch(url)
+    user_id = await response.text()
+
     if (spellbook_id === 'None') {
         console.log("No spellbook id found")
     } else {
@@ -59,15 +64,15 @@ async function set_up_page() {
         let table = document.getElementById('current spells table')
         for (spelll in spell_list) {
             // get the full spell info
-            let url = "https://www.dnd5eapi.co/api/spells/" + spell_list[spelll]
+            let url = "http://localhost:5000/spells/" + spell_list[spelll]
             let response = await fetch(url)
             spell_info = await response.json()
-            if (!spell_info["desc"]) { break }
+            if(!spell_info["desc"]){break}
 
             add_known_spell(spell_info, table, character_stats["spell_casting_class"])
         }
 
-        get_spells(character_stats["spell_casting_class"], 0, character_stats["spell_slot_level"])
+        get_spells(character_stats["spell_casting_class"], user_id, character_stats["spell_slot_level"])
     }
 }
 
@@ -113,7 +118,7 @@ async function get_spells(class_name, user_id, level){
     //let ctr = 0
 
     // use fetch to get all the spells available for the class
-    let url = "http://localhost:5000/spells/class/" + class_name + "/level/" + level
+    let url = "http://localhost:5000/spells/user/" + user_id + "/class/" + class_name + "/level/" + level
     let response = await fetch(url)
     all_spells = await response.json()
 

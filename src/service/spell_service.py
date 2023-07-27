@@ -37,6 +37,8 @@ def create_spell(index, user_id, name, level, classes, subclasses, school, casti
 
 def get_spell(index):
     db_spell = dao.get_spell(index)
+    if db_spell is None:
+        return None
     return Spell(db_spell[0], db_spell[1], db_spell[2], db_spell[3], db_spell[4], db_spell[5], db_spell[6], db_spell[7],
                  db_spell[8], db_spell[9], db_spell[10], db_spell[11], db_spell[12], db_spell[13], db_spell[14],
                  db_spell[15], db_spell[16], db_spell[17], db_spell[18], db_spell[19], db_spell[20])

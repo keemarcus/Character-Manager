@@ -4,6 +4,7 @@ import requests
 
 import src.dao.spellbook_dao as dao
 import src.dao.character_dao as character_dao
+import src.service.spell_service as spell_service
 
 # import our reimbursement logic
 from src.models.spellbook import SpellBook
@@ -141,13 +142,13 @@ def get_spellbook_spells(spellbook_id=None):
 
 def add_spell(spellbook_id, spell_index):
     # validate spell
-    spell = requests.get("https://www.dnd5eapi.co/api/spells/" + spell_index)
-    if (spell.status_code // 100) != 2:
+    spell = spell_service.get_spell(spell_index)
+    if spell is None:
         return "That spell does not exist"
     # check to see if the spell already exists in the spellbook
     if type(dao.get_spellbook_spell(spellbook_id, spell_index)) == pyodbc.Row:
         return "That spell already exists in that spellbook"
-    dao.add_spell(spellbook_id, spell_index, spell.json()["level"])
+    dao.add_spell(spellbook_id, spell_index, spell.get_level())
 
 
 def delete_spell(spellbook_id, spell_index):
@@ -155,3 +156,8 @@ def delete_spell(spellbook_id, spell_index):
     if type(dao.get_spellbook_spell(spellbook_id, spell_index)) != pyodbc.Row:
         return "That spell doesn't exist in that spellbook"
     dao.delete_spell(spellbook_id, spell_index)
+
+
+def get_user_id(spellbook_id):
+    user_id = int(dao.get_user_id(spellbook_id)[0])
+    return user_id

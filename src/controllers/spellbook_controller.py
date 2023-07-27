@@ -18,6 +18,7 @@ import logging
 @app.route('/spellbook/<int:spellbook_id>', methods=['GET'])
 def spellbook(spellbook_id):
     session['spellbook_id'] = spellbook_id
+    session['user_id'] = service.get_user_id(spellbook_id)
     return redirect('../spellbook.html')
 
 
@@ -25,6 +26,7 @@ def spellbook(spellbook_id):
 @app.route('/add_spell/<int:spellbook_id>', methods=['GET'])
 def add_spell_page(spellbook_id):
     session['spellbook_id'] = spellbook_id
+    session['user_id'] = service.get_user_id(spellbook_id)
     return redirect('../add_spell.html')
 
 

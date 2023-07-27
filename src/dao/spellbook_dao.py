@@ -291,3 +291,23 @@ def get_character(character_id):
         connection.close()
         # return the result
         return result
+
+
+def get_user_id(spellbook_id):
+    # create result variable
+    result = None
+    try:
+        # set up a new database connection and cursor
+        connection = dbconfig.get_connection()
+        cursor = connection.cursor()
+        # create query string
+        query = "SELECT user_id FROM spellbooks WHERE spellbook_id = ?"
+        # execute our query
+        cursor.execute(query, spellbook_id)
+        # use cursor to fetch the results of the query
+        result = cursor.fetchone()
+    finally:
+        # close our database connection
+        connection.close()
+        # return the result
+        return result
