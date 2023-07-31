@@ -27,7 +27,7 @@ def spellbook(spellbook_id):
 def add_spell_page(spellbook_id):
     session['spellbook_id'] = spellbook_id
     session['user_id'] = service.get_user_id(spellbook_id)
-    return redirect('../add_spell.html')
+    return redirect('../edit_spellbook.html')
 
 
 @app.route('/spellbooks/slots/<int:spellbook_id>', methods=['GET'])
