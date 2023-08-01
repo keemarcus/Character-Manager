@@ -2,11 +2,17 @@ from src.app import app, request, session, redirect
 
 # import our service level logic for reimbursements
 import src.service.spell_service as service
+import src.service.spellbook_service as spellbook_service
 
 # import json formatting logic
 from src.models.spell import SpellEncoder
 from json import dumps
 
+
+@app.route('/new-spell/<int:user_id>', methods=['GET'])
+def serve_add_spell_page(user_id):
+    session['user_id'] = user_id
+    return redirect('../add_spell.html')
 
 @app.route('/spells/<string:spell_index>', methods=['GET'])
 def get_spell(spell_index):
@@ -50,32 +56,62 @@ def get_custom_spells_level(user_id, class_name, level):
 
 @app.route('/spells', methods=['POST'])
 def create_spell():
-    # spell_data = request.json
-    # result = service.create_spell(spell_data['index'], spell_data['user_id'], spell_data['name'], spell_data['level'],
-    #                               spell_data['classes'], spell_data['subclasses'], spell_data['school'],
-    #                               spell_data['casting_time'], spell_data['range'], spell_data['duration'],
-    #                               spell_data['components'], spell_data['material'], spell_data['concentration'],
-    #                               spell_data['desc'], spell_data['ritual'], spell_data['dc'],
-    #                               spell_data['higher_level'],
-    #                               spell_data['damage'], spell_data['area_of_effect'], spell_data['heal_at_slot_level'],
-    #                               spell_data['attack_type'])
+    spell_index = request.form.get('name').strip().replace(' ', '-').lower()
+
+    if request.form.get('level') == "cantrip":
+        spell_level = 0
+    else:
+        spell_level = int(request.form.get('level'))
+
+
+    spell_classes = ""
+    for spell_class in request.form.getlist('classes'):
+        spell_classes = spell_classes + spell_class + " - "
+    if len(spell_classes) > 0:
+        spell_classes = spell_classes[:-3]
+    else:
+        spell_classes = None
+
+    spell_subclasses = ""
+    for spell_subclass in request.form.getlist('subclasses'):
+        spell_subclasses = spell_subclasses + spell_subclass + " - "
+    if len(spell_subclasses) > 0:
+        spell_subclasses = spell_subclasses[:-3]
+    else:
+        spell_subclasses = None
+
+    spell_components = ""
+    for spell_component in request.form.getlist('components'):
+        spell_components = spell_components + spell_component + ", "
+    if len(spell_components) > 0:
+        spell_components = spell_components[:-2]
+    else:
+        spell_components = None
+
+    concentration = "False"
+    if request.form.get('concentration') is not None:
+        concentration = "True"
+
+    ritual = "False"
+    if request.form.get('ritual') is not None:
+        ritual = "True"
 
     result = service.create_spell(
-        request.form.get('index'),
+        spell_index,
         request.form.get('user_id'),
         request.form.get('name'),
-        request.form.get('level'),
-        request.form.get('classes'),
-        request.form.get('subclasses'),
+        spell_level,
+        spell_classes,
+        spell_subclasses,
         request.form.get('school'),
         request.form.get('casting_time'),
         request.form.get('range'),
         request.form.get('duration'),
-        request.form.get('components'),
+        spell_components,
         request.form.get('material'),
-        request.form.get('concentration'),
+        concentration,
         request.form.get('desc'),
-        request.form.get('ritual'),
+        ritual,
         request.form.get('dc'),
         request.form.get('higher_level'),
         request.form.get('damage'),

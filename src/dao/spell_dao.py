@@ -9,9 +9,9 @@ def create_spell(spell):
         connection = dbconfig.get_connection()
         cursor = connection.cursor()
         # create query string using parameterization to protect against SQL injection
-        query = "INSERT INTO spells VALUES (?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        query = "INSERT INTO spells VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         # execute our query and commit the changes to the database
-        cursor.execute(query, spell.get_index(), spell.get_name(), spell.get_level(), spell.get_classes(),
+        cursor.execute(query, spell.get_index(), spell.get_user_id(), spell.get_name(), spell.get_level(), spell.get_classes(),
                        spell.get_subclasses(), spell.get_school(), spell.get_casting_time(), spell.get_range(),
                        spell.get_duration(), spell.get_components(), spell.get_material(), spell.get_concentration(),
                        spell.get_desc(), spell.get_ritual(), spell.get_dc(), spell.get_higher_level(),

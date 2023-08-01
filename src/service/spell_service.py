@@ -13,9 +13,9 @@ def create_spell(index, user_id, name, level, classes, subclasses, school, casti
         connection = dbconfig.get_connection()
         cursor = connection.cursor()
         # create query string
-        query = "SELECT * FROM spells WHERE spell_index = ?"
+        query = "SELECT * FROM spells WHERE spell_index = ? AND user_id = ?"
         # execute our query
-        cursor.execute(query, index)
+        cursor.execute(query, index, user_id)
         # use cursor to fetch the results of the query
         result = cursor.fetchone()
     finally:
@@ -27,6 +27,9 @@ def create_spell(index, user_id, name, level, classes, subclasses, school, casti
         return str("Spell: " + name + " - Is Already In Database")
 
     print("Adding Spell: " + name)
+    # add user id to spell index to make sure we maintain unique indexes
+    if int(user_id) > 0:
+        index = index + "-" + str(user_id)
     # create a spell object
     new_spell = Spell(index, user_id, name, level, classes, subclasses, school, casting_time, range, duration,
                       components, material, concentration, desc, ritual, dc, higher_level, damage, area_of_effect,
