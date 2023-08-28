@@ -52,9 +52,12 @@ def restore_spell_slots(spellbook_id):
 @app.route('/spellbooks/cast', methods=['POST'])
 def cast_spell():
     spellbook_id = request.form.get('spellbook_id')
+    print(spellbook_id)
     character_id = str(request.form.get('character_id'))
     spell_index = str(request.form.get('spell_index'))
+    print(spell_index)
     spell_level = int(request.form.get('spell_level'))
+    print(spell_level)
 
     # return the result in json form
     result = service.cast_spell(character_id, spellbook_id, spell_index, spell_level)

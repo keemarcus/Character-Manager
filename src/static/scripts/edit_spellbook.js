@@ -55,14 +55,16 @@ async function set_up_page() {
 
         let spell_slot_levels = new Set()
         set_up_spell_slots(character_stats["spell_casting_class"], spell_slot_levels)
-
-        // use fetch to get the spells already in the current spellbook
+        
+        // use fetch to get the spells in the current spellbook
         url = "http://localhost:5000/spellbooks/spells/" + spellbook_id
         response = await fetch(url)
         spells = await response.text()
         const spell_list = spells.toString().split(",")
-        let table = document.getElementById('current spells table')
-        for (spelll in spell_list) {
+        if(spell_list[0] != ''){
+            let table = document.getElementById('current spells table')
+            console.log("known spells")
+            for (spelll in spell_list){
             // get the full spell info
             let url = "http://localhost:5000/spells/" + spell_list[spelll]
             let response = await fetch(url)
@@ -71,7 +73,25 @@ async function set_up_page() {
 
             add_known_spell(spell_info, table, character_stats["spell_casting_class"])
         }
+        }
+        
+        // use fetch to get the spells already in the current spellbook
+        // url = "http://localhost:5000/spellbooks/spells/" + spellbook_id
+        // response = await fetch(url)
+        // spells = await response.text()
+        // const spell_list = spells.toString().split(",")
+        // let table = document.getElementById('current spells table')
+        // for (spelll in spell_list) {
+        //     // get the full spell info
+        //     let url = "http://localhost:5000/spells/" + spell_list[spelll]
+        //     let response = await fetch(url)
+        //     spell_info = await response.json()
+        //     if(!spell_info["desc"]){break}
 
+        //     add_known_spell(spell_info, table, character_stats["spell_casting_class"])
+        // }
+
+        console.log("add spell")
         get_spells(character_stats["spell_casting_class"], user_id, character_stats["spell_slot_level"])
     }
 }
@@ -120,6 +140,7 @@ async function get_spells(class_name, user_id, level){
     // use fetch to get all the spells available for the class
     let url = "http://localhost:5000/spells/user/" + user_id + "/class/" + class_name + "/level/" + level
     let response = await fetch(url)
+    console.log(response)
     all_spells = await response.json()
 
     for (spell in all_spells) {
@@ -172,6 +193,7 @@ function add_spell(spellbook_id, spell_index) {
 
 function add_known_spell(spell_info, table, spell_casting_class){
     // create new table row
+    console.log(table)
     let row = table.insertRow(-1)
     let name_cell = row.insertCell(0)
     let level_cell = row.insertCell(1)

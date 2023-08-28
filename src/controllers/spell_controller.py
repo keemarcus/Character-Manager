@@ -14,6 +14,7 @@ def serve_add_spell_page(user_id):
     session['user_id'] = user_id
     return redirect('../add_spell.html')
 
+
 @app.route('/spells/<string:spell_index>', methods=['GET'])
 def get_spell(spell_index):
     # use service layer logic to get results

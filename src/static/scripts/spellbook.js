@@ -118,9 +118,10 @@ function add_spell(spell_info, table, spell_casting_class){
     let cast_cell = row.insertCell(1)
     let level_cell = row.insertCell(2)
     let components_cell = row.insertCell(3)
-    let duration_cell = row.insertCell(4)
-    let range_cell = row.insertCell(5)
-    let desc_cell = row.insertCell(6)
+    let casting_time_cell = row.insertCell(4)
+    let duration_cell = row.insertCell(5)
+    let range_cell = row.insertCell(6)
+    let desc_cell = row.insertCell(7)
     desc_cell.classList.add("desc")
 
     // insert the data into the new row
@@ -131,16 +132,18 @@ function add_spell(spell_info, table, spell_casting_class){
         level_cell.innerText = spell_info["level"]
     }
     
-    if(spell_info["higher_level"]){
+    if(spell_info["higher_level"] && spell_info["level"] != 0){
         level_cell.innerText += "+"
     }
     // set up cast buttons
     if (spell_info["level"] == 0){
-        var btn = document.createElement('input')
-        btn.type = "button"
-        btn.value = "Cast"
-        btn.setAttribute('onclick', 'javascript: cast_spell(' + spellbook_id + ', "' + character_stats['character_id'] + '", "' + spell_info["index"] + '", ' + 0 + ');' );
-        cast_cell.appendChild(btn)
+        level_cell.colSpan = 2
+        row.deleteCell(1)
+        // var btn = document.createElement('input')
+        // btn.type = "button"
+        // btn.value = "Cast"
+        // btn.setAttribute('onclick', 'javascript: cast_spell(' + spellbook_id + ', "' + character_stats['character_id'] + '", "' + spell_info["index"] + '", ' + 0 + ');' );
+        // cast_cell.appendChild(btn)
     }else if(spell_casting_class == "warlock"){
         if(available_spell_slots[character_stats["spell_slot_level"]] > 0){
             var btn = document.createElement('input')
@@ -170,6 +173,15 @@ function add_spell(spell_info, table, spell_casting_class){
     if(components_cell.innerText.includes('M')){
         components_cell.innerText += " (" + spell_info["material"].replace('.', '') + ")" 
     }
+    let casting_time = ""
+    casting_time_words = spell_info["casting_time"].replace('1', '').trim().split(' ')
+    for(let i = 0; i < casting_time_words.length; i++){
+        let current_word = casting_time_words[i][0].toUpperCase() + casting_time_words[i].substr(1)
+        casting_time += current_word
+        if(i < (casting_time_words.length - 1)){casting_time += " "}
+    }
+    casting_time = casting_time
+    casting_time_cell.innerText = casting_time
     duration_cell.innerText = spell_info["duration"]
     range_cell.innerText = spell_info["range"]
     if(spell_info["higher_level"]){
