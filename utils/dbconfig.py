@@ -15,6 +15,6 @@ import os
 def get_connection():
     # return connect("jdbc:postgresql://spellbook-1.clklzl8qupep.us-east-2.rds.amazonaws.com:5432/postgres")
     return connect("DRIVER=PostgreSQL UNICODE(x64);SERVER=spellbook-1.clklzl8qupep.us-east-2.rds.amazonaws.com;"
-                   "PORT=5432;DATABASE=postgres;UID=postgres;PWD=password")
+                   "PORT=5432;DATABASE=postgres;UID=postgres;PWD=password; sslrootcert=us-east-2-bundle; sslmode=verify-full")
     return connect("DRIVER=PostgreSQL UNICODE(x64);SERVER=localhost;PORT=5432;DATABASE=postgres;UID=postgres;PWD=password;Trusted_Connection=no;BoolsAsChar=0")
     return connect(f"DRIVER={{PostgreSQL UNICODE(x64)}};SERVER={db_url};PORT=5432;DATABASE={db_name};UID={db_username};PWD={db_password};Trusted_Connection=no;BoolsAsChar=0")
