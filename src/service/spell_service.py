@@ -11,6 +11,7 @@ def create_spell(index, user_id, name, level, classes, subclasses, school, casti
     try:
         # set up a new database connection and cursor
         connection = dbconfig.get_connection()
+        # print(connection)
         cursor = connection.cursor()
         # create query string
         query = "SELECT * FROM spells WHERE spell_index = ? AND user_id = ?"
