@@ -1,1 +1,1 @@
-web: gunicorn <Character-Manager>:<spellbook-manager-dd>
+web: gunicorn Character-Manager:spellbook-manager-dd
