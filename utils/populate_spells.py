@@ -1,4 +1,3 @@
-from utils import dbconfig
 import requests
 from src.models.spell import Spell
 import src.service.spell_service as service
