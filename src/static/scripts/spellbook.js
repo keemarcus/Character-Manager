@@ -1,5 +1,6 @@
 const available_spell_slots = new Object()
 const backend_url = window.location.origin;
+console.log(backend_url)
 set_up_page()
 
 async function set_up_page() {
