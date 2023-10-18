@@ -12,6 +12,6 @@ if __name__ == '__main__':
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
     app.secret_key = 'super_secret'
-    session['user_id'] = 1
+    #session['user_id'] = 1
     app.run()
 
