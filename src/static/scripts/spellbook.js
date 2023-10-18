@@ -14,11 +14,13 @@ async function set_up_page() {
     }
     else {
         // get the character info
-        let url = "http://localhost:5000/spellbooks/" + spellbook_id
+        let url = backend_url + "/spellbooks/" + spellbook_id
+        //let url = "http://localhost:5000/spellbooks/" + spellbook_id
         let response = await fetch(url)
         character_stats = await response.json()
 
-        url = "http://localhost:5000/characters/" + character_stats["character_id"]
+        url = backend_url + "/characters/" + character_stats["character_id"]
+        //url = "http://localhost:5000/characters/" + character_stats["character_id"]
         response = await fetch(url)
         character_info = await response.json()
 
@@ -37,7 +39,8 @@ async function set_up_page() {
         set_up_spell_slots(character_stats["spell_casting_class"])
 
         // use fetch to get the spells in the current spellbook
-        url = "http://localhost:5000/spellbooks/spells/" + spellbook_id
+        url = backend_url + "/spellbooks/spells/" + spellbook_id
+        //url = "http://localhost:5000/spellbooks/spells/" + spellbook_id
         response = await fetch(url)
         spells = await response.text()
         const spell_list = spells.toString().split(",")
@@ -45,7 +48,8 @@ async function set_up_page() {
         let table = document.getElementById('spell table')
         for (spelll in spell_list){
             // get the full spell info
-            let url = "http://localhost:5000/spells/" + spell_list[spelll]
+            let url = backend_url + "/spells/" + spell_list[spelll]
+            //let url = "http://localhost:5000/spells/" + spell_list[spelll]
             let response = await fetch(url)
             spell_info = await response.json()
             if(!spell_info["desc"]){break}
@@ -64,7 +68,8 @@ function cast_spell(spellbook_id, character_id, spell_index, spell_level){
     formData.append("spell_level", spell_level);
     
     const request = new XMLHttpRequest();
-    request.open("POST", "http://localhost:5000/spellbooks/cast");
+    request.open("POST", backend_url + "/spellbooks/cast");
+    //request.open("POST", "http://localhost:5000/spellbooks/cast");
     request.send(formData);
 
     location.reload()
@@ -72,7 +77,8 @@ function cast_spell(spellbook_id, character_id, spell_index, spell_level){
 
 async function set_up_spell_slots(spell_casting_class){
     // use fetch to get the spell slots
-    let url = "http://localhost:5000/spellbooks/slots/" + spellbook_id
+    let url = backend_url + "/spellbooks/slots/" + spellbook_id
+    //let url = "http://localhost:5000/spellbooks/slots/" + spellbook_id
     let response = await fetch(url)
     let spell_slots = await response.json()
 
