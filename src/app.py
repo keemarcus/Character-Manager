@@ -8,6 +8,7 @@ from flask import Flask, request, redirect, url_for, session, make_response, fla
 
 # set up flask app
 app = Flask(__name__, static_url_path='')
+app.secret_key = 'super_secret'
 #CORS(app)
 #oauth = OAuth(app)
 
