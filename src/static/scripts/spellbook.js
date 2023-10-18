@@ -16,7 +16,7 @@ async function set_up_page() {
     }
     else {
         // get the character info
-        let url = backend_url + "/spellbooks/" + spellbook_id
+        let url = backend_url + "/spellbooks/" + parseInt(spellbook_id)
         console.log(url)
         //let url = "http://localhost:5000/spellbooks/" + spellbook_id
         let response = await fetch(url)
