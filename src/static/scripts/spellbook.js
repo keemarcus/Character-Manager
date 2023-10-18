@@ -1,10 +1,10 @@
 const available_spell_slots = new Object()
-const url = window.location.origin;
+const backend_url = window.location.origin;
 set_up_page()
 
 async function set_up_page() {
     // use fetch to get the id of the current spellbook
-    let url = "url/session/spellbook_id"
+    let url = backend_url + "/session/spellbook_id"
     //let url = "http://localhost:5000/session/spellbook_id"
     let response = await fetch(url)
     spellbook_id = await response.text()
