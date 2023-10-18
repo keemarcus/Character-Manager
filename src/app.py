@@ -44,7 +44,7 @@ def login():
 
 @app.route('/session/spellbook_id', methods=['GET'])
 def session_spellbook_id():
-    session['user_id'] = 1
+    session['spellbook_id'] = 1
     return str(session.get('spellbook_id'))
 
 
