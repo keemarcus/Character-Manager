@@ -6,6 +6,7 @@ set_up_page()
 async function set_up_page() {
     // use fetch to get the id of the current spellbook
     let url = backend_url + "/session/spellbook_id"
+    console.log(url)
     //let url = "http://localhost:5000/session/spellbook_id"
     let response = await fetch(url)
     spellbook_id = await response.text()
@@ -16,6 +17,7 @@ async function set_up_page() {
     else {
         // get the character info
         let url = backend_url + "/spellbooks/" + spellbook_id
+        console.log(url)
         //let url = "http://localhost:5000/spellbooks/" + spellbook_id
         let response = await fetch(url)
         character_stats = await response.json()
