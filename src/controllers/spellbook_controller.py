@@ -14,12 +14,7 @@ from json import dumps
 import logging
 
 
-# redirect to our static home page
-@app.route('/spellbook/<int:spellbook_id>', methods=['GET'])
-def spellbook(spellbook_id):
-    session['spellbook_id'] = spellbook_id
-    session['user_id'] = service.get_user_id(spellbook_id)
-    return redirect('../spellbook.html')
+
 
 
 # redirect to our static home page
