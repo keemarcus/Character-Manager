@@ -4,7 +4,7 @@ import logging
 from src.app import app, session
 
 # import our user and reimbursement controllers for our app
-from src.controllers import spellbook_controller, spell_controller, character_controller
+from controllers import spellbook_controller, spell_controller, character_controller
 
 # start our application when main.py is running
 if __name__ == '__main__':
