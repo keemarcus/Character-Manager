@@ -6,6 +6,9 @@ from flask import Flask, request, redirect, url_for, session, make_response, fla
 
 # from flask_session import Session
 
+# import our user and reimbursement controllers for our app
+from src.controllers import spellbook_controller, spell_controller, character_controller
+
 # set up flask app
 app = Flask(__name__, static_url_path='')
 app.secret_key = 'super_secret'
