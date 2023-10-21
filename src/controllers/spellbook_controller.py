@@ -1,6 +1,6 @@
 # import our flask app and database connection/cursor from app.py
 
-from app import app, request, session, redirect
+from src.app import app, request, session, redirect
 
 # import our service level logic for reimbursements
 import src.service.spellbook_service as service

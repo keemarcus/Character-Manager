@@ -1,4 +1,4 @@
-from app import app, request
+from src.app import app, request
 
 # import our service level logic for reimbursements
 import src.service.character_service as service

@@ -1,4 +1,4 @@
-from app import app, request, session, redirect
+from src.app import app, request, session, redirect
 
 # import our service level logic for reimbursements
 import src.service.spell_service as service
