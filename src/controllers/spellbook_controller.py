@@ -1,7 +1,6 @@
 # import our flask app and database connection/cursor from app.py
-import datetime
 
-from src.app import app, request, session, redirect
+from app import app, request, session, redirect
 
 # import our service level logic for reimbursements
 import src.service.spellbook_service as service
@@ -11,10 +10,14 @@ from src.models.spellbook import SpellbookEncoder
 from json import dumps
 
 # set up logging
-import logging
 
 
-
+# redirect to our static home page
+@app.route('/spellbook/<int:spellbook_id>', methods=['GET'])
+def spellbook(spellbook_id):
+    session['spellbook_id'] = spellbook_id
+    session['user_id'] = service.get_user_id(spellbook_id)
+    return redirect('../spellbook.html')
 
 
 # redirect to our static home page

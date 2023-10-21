@@ -1,8 +1,7 @@
-from src.app import app, request, session, redirect
+from app import app, request, session, redirect
 
 # import our service level logic for reimbursements
 import src.service.spell_service as service
-import src.service.spellbook_service as spellbook_service
 
 # import json formatting logic
 from src.models.spell import SpellEncoder
