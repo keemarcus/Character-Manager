@@ -1,5 +1,5 @@
 const available_spell_slots = new Object()
-const backend_url = location.host;
+const backend_url = location.origin;
 console.log(backend_url)
 set_up_page()
 
@@ -16,7 +16,7 @@ async function set_up_page() {
     }
     else {
         // get the character info
-        let url = backend_url + "/spellbooks/" + parseInt(spellbook_id)
+        let url = backend_url + "/spellbooks/" + spellbook_id
         console.log(url)
         //let url = "http://localhost:5000/spellbooks/" + spellbook_id
         let response = await fetch(url)

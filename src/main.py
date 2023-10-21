@@ -1,9 +1,10 @@
 # import our flask app from app.py
 import logging
 
-from app import app
+from src.app import app
 
 # import our user and reimbursement controllers for our app
+from src.controllers import character_controller, spell_controller, spellbook_controller
 
 # start our application when main.py is running
 if __name__ == '__main__':
